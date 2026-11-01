@@ -1,0 +1,174 @@
+@startuml
+title P6 – Gestión de Inscripciones de un Gimnasio
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package modelo {
+  interface Contratable {
+    {static} +TASA_IMPUESTO : double
+    +clave() : CodigoActividad
+    +nombre() : String
+    +precioBase() : double
+    +tarifa(u : int) : double
+    +tarifaConImpuesto(u : int) : double
+    {static} +porNombre() : Comparator
+  }
+  interface ConInstructor {
+    +instructor() : String
+    +descripcionCorta() : String
+  }
+  interface ConCupo {
+    +cupoMaximo() : int
+    +descripcionCorta() : String
+  }
+  abstract class Actividad <<sealed>> {
+    -clave : CodigoActividad
+    -nombre : String
+    -precioBase : double
+    -creadoEn : LocalDateTime
+    -cotizaciones : int <<transient>>
+    +tarifa(u : int) : double <<final>>
+    {abstract} #calcularTarifa(u : int) : double
+    {abstract} +copiar() : Actividad
+  }
+  class "Actividad.ClaseGrupal" as ClaseGrupal <<static final>> {
+    {static} +PREFIJO : String = "CLG"
+    -disciplina : String
+    #calcularTarifa(u : int) : double
+    +copiar() : ClaseGrupal
+  }
+  class "Actividad.Entrenamiento" as Entrenamiento <<static final>> {
+    {static} +PREFIJO : String = "ENT"
+    -intensidad : int
+    #calcularTarifa(u : int) : double
+    +copiar() : Entrenamiento
+  }
+  class "Actividad.AccesoLibre" as AccesoLibre <<static final>> {
+    {static} +PREFIJO : String = "ACL"
+    -turno : String
+    #calcularTarifa(u : int) : double
+    +copiar() : AccesoLibre
+  }
+  class CodigoActividad <<record>> {
+    prefijo : String
+    numero : int
+    {static} +siguiente(prefijo : String) : CodigoActividad
+    {static} +parse(texto : String) : CodigoActividad
+  }
+  enum Nivel {
+    BASICO
+    ESTUDIANTE
+    PREMIUM
+    +aplicar(monto : double) : double
+  }
+  enum Estado {
+    ABIERTA
+    EN_CURSO
+    CERRADA
+    CANCELADA
+    +permiteTransicionA(d : Estado) : boolean
+  }
+  class Miembro <<Externalizable>> {
+    -id : int
+    -nombre : String
+    -correo : String
+    -nivel : Nivel
+  }
+  class Inscripcion {
+    -id : int
+    -fecha : LocalDate
+    -estado : Estado
+    +agregar(e : Actividad, u : int) : Linea
+    +cambiarEstado(d : Estado)
+    +total() : double
+  }
+  class "Inscripcion.Linea" as Linea <<inner>> {
+    -unidades : int
+    +importe() : double
+  }
+  class Programa {
+    +agregar(e : Actividad...)
+    +filtrar(r : Regla) : List
+    {static} +porTarifa(u : int) : Comparator
+    +resumen() : String
+  }
+  class "Programa.Iterador" as Iterador <<private inner>>
+}
+
+package funcional {
+  interface "Regla<T>" as Regla <<functional>> {
+    +evaluar(t : T) : boolean
+    +y(o) : Regla
+    +o(o) : Regla
+    +negar() : Regla
+  }
+  interface "FabricaElemento<E extends Actividad, A>" as Fabrica <<functional>> {
+    +crear(nombre, precio, atributo : A) : E
+  }
+}
+
+package concurrencia {
+  abstract class TareaPeriodica implements Runnable {
+    -activa : boolean <<volatile>>
+    +iniciar(nombre : String)
+    +detener()
+    {abstract} #ejecutarCiclo()
+  }
+}
+
+package eventos {
+  interface OyenteEvento <<functional>>
+  class Evento <<record>>
+}
+
+package persistencia {
+  interface "Repositorio<T,K>" as Repositorio
+  class RepositorioActividadSQLite
+  class RepositorioMiembroSQLite
+  class RepositorioInscripcionSQLite
+  class ConexionSQLite
+  class Respaldo
+}
+
+package servicio {
+  class Gimnasio {
+    +registrar(f : FabricaElemento, ...) : E
+    +abrir(id : int) : Inscripcion
+    +revisar() : int
+    +iniciarMonitor(ms : long)
+  }
+  class "Gimnasio.MonitorRenovaciones" as Monitor <<inner>>
+}
+
+Actividad ..|> Contratable
+ClaseGrupal --|> Actividad
+Actividad +-- ClaseGrupal
+ClaseGrupal ..|> ConInstructor
+Entrenamiento --|> Actividad
+Actividad +-- Entrenamiento
+Entrenamiento ..|> ConCupo
+AccesoLibre --|> Actividad
+Actividad +-- AccesoLibre
+AccesoLibre ..|> ConInstructor
+AccesoLibre ..|> ConCupo
+Inscripcion *-- "1..*" Linea
+Inscripcion +-- Linea
+Linea --> "1" Actividad
+Inscripcion --> "1" Miembro
+Inscripcion --> Estado
+Miembro --> Nivel
+Programa o-- "0..*" Actividad
+Programa +-- Iterador
+Programa ..> Regla
+Fabrica ..> Actividad
+Gimnasio +-- Monitor
+Monitor --|> TareaPeriodica
+Gimnasio o-- "0..*" OyenteEvento
+Gimnasio --> Programa
+Gimnasio --> Repositorio
+RepositorioActividadSQLite ..|> Repositorio
+RepositorioMiembroSQLite ..|> Repositorio
+RepositorioInscripcionSQLite ..|> Repositorio
+RepositorioInscripcionSQLite --> ConexionSQLite
+OyenteEvento ..> Evento
+@enduml
