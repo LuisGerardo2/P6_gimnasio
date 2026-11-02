@@ -47,8 +47,15 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
 
     /** Constructor completo (también usado al reconstruir desde la base de datos). */
     public Inscripcion(int id, Miembro miembro, LocalDate fecha) {
+        if(id<=0){ throw new ReglaNegocioException("El Id debe ser mayor a 1");}else{
+            this.id=id;
+            this.miembro=Objects.requireNonNull(miembro);
+            this.fecha=Objects.requireNonNull(fecha);
+            SECUENCIA.accumulateAndGet(id(),Math::max);
+        }
+
         // TODO E07: Validar id > 0, actor y fecha no nulos; asignar y sincronizar SECUENCIA con accumulateAndGet(id, Math::max).
-        throw new UnsupportedOperationException("TODO E07");
+
     }
 
     public int id() {
@@ -69,19 +76,45 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
 
     /** Agrega una línea; sólo es posible mientras está ABIERTA y sin repetir actividad. */
     public synchronized Linea agregar(Actividad elemento, int unidades) {
+        if (estado==Estado.ABIERTA) {
+            Objects.requireNonNull(elemento,"elemento");
+           if( lineas.stream().anyMatch(x->x.elemento.equals(elemento))){
+               throw new ReglaNegocioException("Esta cuenta ya esta inscrita en esta actividad");
+
+           }
+           else{
+               Linea l=new Linea(elemento,unidades);
+               lineas.add(l);
+               return l;
+           }
+        }else {throw new ReglaNegocioException("El estado debe estar abierto");}
         // TODO E07: Exigir estado ABIERTA, rechazar elementos repetidos (stream anyMatch), crear la Linea interna y añadirla.
-        throw new UnsupportedOperationException("TODO E07");
+
     }
 
     /** Quita la línea del actividad indicado (sólo en estado ABIERTA). */
     public synchronized boolean quitar(CodigoActividad clave) {
+        if (estado==Estado.ABIERTA) {
+            return lineas.removeIf(x->x.elemento.clave().equals(clave));
+        }
+
         // TODO E07: Exigir estado ABIERTA y eliminar con removeIf la línea cuyo elemento tenga esa clave.
         throw new UnsupportedOperationException("TODO E07");
     }
 
     public synchronized void cambiarEstado(Estado destino) {
+        if (!estado.permiteTransicionA(destino)){
+            throw new ReglaNegocioException("Transición inválida: " + estado.etiqueta() + " → " + destino.etiqueta());
+        }
+
+        if (destino == Estado.EN_CURSO && lineas.isEmpty()) {
+            throw new ReglaNegocioException("Se requiere al menos una línea para activar la inscripción");
+        }
+        estado = destino;
+
+
         // TODO E07: Validar la transición con permiteTransicionA y exigir al menos una línea para pasar a EN_CURSO.
-        throw new UnsupportedOperationException("TODO E07");
+
     }
 
     public void iniciar() {
@@ -107,14 +140,17 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
 
     /** Suma de subtotales sin descuento. */
     public synchronized double subtotal() {
+       return lineas.stream().mapToDouble(Linea::subtotal).sum();
+
         // TODO E08: Sumar los subtotales de las líneas con mapToDouble y redondear a 2 decimales.
-        throw new UnsupportedOperationException("TODO E08");
+
     }
 
     /** Total con el descuento del nivel del miembro. */
     public synchronized double total() {
+        return lineas.stream().mapToDouble(Linea::importe).sum();
         // TODO E08: Sumar los importes de las líneas (ya con descuento) y redondear a 2 decimales.
-        throw new UnsupportedOperationException("TODO E08");
+
     }
 
     public long diasDesde(LocalDate hoy) {
@@ -148,8 +184,11 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
         private final int unidades;
 
         private Linea(Actividad elemento, int unidades) {
-            // TODO E07: Validar unidades > 0 y asignar los campos.
-            throw new UnsupportedOperationException("TODO E07");
+            if (unidades <= 0) {
+                throw new ReglaNegocioException("Las sesiones deben ser mayores que cero");
+            }
+            this.elemento = Objects.requireNonNull(elemento, "El elemento es nulo(Inscipcion linea 190)");
+            this.unidades = unidades;
         }
 
         public Actividad elemento() {
@@ -167,7 +206,7 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
         /** Importe con el descuento del nivel del miembro de la envolvente. */
         public double importe() {
             // TODO E08: Usar Inscripcion.this.miembro.nivel().aplicar(subtotal()).
-            throw new UnsupportedOperationException("TODO E08");
+            return Inscripcion.this.miembro.nivel().aplicar(subtotal());
         }
 
         public Inscripcion contenedor() {
