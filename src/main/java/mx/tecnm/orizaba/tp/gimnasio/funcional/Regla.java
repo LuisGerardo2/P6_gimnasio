@@ -15,18 +15,22 @@ public interface Regla<T> {
     boolean evaluar(T t);
 
     default Regla<T> y(Regla<? super T> otra) {
-        // TODO E11: Devolver la lambda t -> evaluar(t) && otra.evaluar(t) (validar otra no nula).
-        throw new UnsupportedOperationException("TODO E11");
+        Objects.requireNonNull(otra,"Regla no puede ser nula(Regla 18)");
+        return x->evaluar(x) && otra.evaluar(x);
+        // HECHO TODO E11: Devolver la lambda t -> evaluar(t) && otra.evaluar(t) (validar otra no nula).
+
     }
 
     default Regla<T> o(Regla<? super T> otra) {
-        // TODO E11: Devolver la lambda t -> evaluar(t) || otra.evaluar(t).
-        throw new UnsupportedOperationException("TODO E11");
+        return x->evaluar(x) || otra.evaluar(x);
+        // HECHO TODO E11: Devolver la lambda t -> evaluar(t) || otra.evaluar(t).
+
     }
 
     default Regla<T> negar() {
+        return x->!evaluar(x);
         // TODO E11: Devolver la lambda t -> !evaluar(t).
-        throw new UnsupportedOperationException("TODO E11");
+
     }
 
     /** Adaptador hacia {@link Predicate} mediante referencia a método de instancia particular. */
