@@ -77,6 +77,7 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
     /** Agrega una línea; sólo es posible mientras está ABIERTA y sin repetir actividad. */
     public synchronized Linea agregar(Actividad elemento, int unidades) {
         if (estado==Estado.ABIERTA) {
+
             Objects.requireNonNull(elemento,"elemento");
            if( lineas.stream().anyMatch(x->x.elemento.equals(elemento))){
                throw new ReglaNegocioException("Esta cuenta ya esta inscrita en esta actividad");
@@ -88,7 +89,7 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
                return l;
            }
         }else {throw new ReglaNegocioException("El estado debe estar abierto");}
-        // TODO E07: Exigir estado ABIERTA, rechazar elementos repetidos (stream anyMatch), crear la Linea interna y añadirla.
+        // HECHO TODO E07: Exigir estado ABIERTA, rechazar elementos repetidos (stream anyMatch), crear la Linea interna y añadirla.
 
     }
 
@@ -98,7 +99,7 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
             return lineas.removeIf(x->x.elemento.clave().equals(clave));
         }
 
-        // TODO E07: Exigir estado ABIERTA y eliminar con removeIf la línea cuyo elemento tenga esa clave.
+        //HECHO TODO E07: Exigir estado ABIERTA y eliminar con removeIf la línea cuyo elemento tenga esa clave.
         throw new UnsupportedOperationException("TODO E07");
     }
 
@@ -113,7 +114,7 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
         estado = destino;
 
 
-        // TODO E07: Validar la transición con permiteTransicionA y exigir al menos una línea para pasar a EN_CURSO.
+        //HECHO TODO E07: Validar la transición con permiteTransicionA y exigir al menos una línea para pasar a EN_CURSO.
 
     }
 
@@ -142,14 +143,14 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
     public synchronized double subtotal() {
        return lineas.stream().mapToDouble(Linea::subtotal).sum();
 
-        // TODO E08: Sumar los subtotales de las líneas con mapToDouble y redondear a 2 decimales.
+        // HECHO TODO E08: Sumar los subtotales de las líneas con mapToDouble y redondear a 2 decimales.
 
     }
 
     /** Total con el descuento del nivel del miembro. */
     public synchronized double total() {
         return lineas.stream().mapToDouble(Linea::importe).sum();
-        // TODO E08: Sumar los importes de las líneas (ya con descuento) y redondear a 2 decimales.
+        // HECHO TODO E08: Sumar los importes de las líneas (ya con descuento) y redondear a 2 decimales.
 
     }
 
@@ -205,7 +206,7 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
 
         /** Importe con el descuento del nivel del miembro de la envolvente. */
         public double importe() {
-            // TODO E08: Usar Inscripcion.this.miembro.nivel().aplicar(subtotal()).
+            // HECHO TODO E08: Usar Inscripcion.this.miembro.nivel().aplicar(subtotal()).
             return Inscripcion.this.miembro.nivel().aplicar(subtotal());
         }
 

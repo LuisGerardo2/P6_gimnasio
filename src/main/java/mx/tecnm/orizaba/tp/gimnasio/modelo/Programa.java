@@ -33,8 +33,14 @@ public class Programa implements Iterable<Actividad>, Serializable {
     }
 
     public final void agregar(Actividad... nuevos) {
-        // TODO E09: Recorrer los argumentos; rechazar nulos y claves duplicadas (ReglaNegocioException); usar putIfAbsent.
-        throw new UnsupportedOperationException("TODO E09");
+        for(Actividad a:nuevos){
+            if (elementos.putIfAbsent(a.clave(), a) != null) {
+                throw new ReglaNegocioException("Ya existe la actividad " + a.clave());
+            }
+        }
+
+        //HECHO  TODO E09: Recorrer los argumentos; rechazar nulos y claves duplicadas (ReglaNegocioException); usar putIfAbsent.
+
     }
 
     public Optional<Actividad> buscar(CodigoActividad clave) {
@@ -51,14 +57,18 @@ public class Programa implements Iterable<Actividad>, Serializable {
 
     /** Filtrado con la interfaz funcional propia {@link Regla}. */
     public List<Actividad> filtrar(Regla<? super Actividad> regla) {
-        // TODO E09: Stream de los valores filtrado con regla::evaluar y recolectado con toList().
-        throw new UnsupportedOperationException("TODO E09");
+    return elementos.values().stream().filter(regla::evaluar).toList();
+
+    // HECHO TODO E09: Stream de los valores filtrado con regla::evaluar y recolectado con toList().
+
     }
 
     /** Filtrado por subtipo con genéricos acotados: {@code deTipo(Actividad.ClaseGrupal.class)}. */
     public <E extends Actividad> List<E> deTipo(Class<E> tipo) {
-        // TODO E09: Usar filter(tipo::isInstance) y map(tipo::cast).
-        throw new UnsupportedOperationException("TODO E09");
+        return elementos.values().stream().filter(tipo::isInstance).map(tipo::cast).toList();
+
+        // HECHO TODO E09: Usar filter(tipo::isInstance) y map(tipo::cast).
+
     }
 
     public List<Actividad> ordenados(Comparator<? super Actividad> criterio) {
@@ -70,14 +80,49 @@ public class Programa implements Iterable<Actividad>, Serializable {
      * {@code unidades} (efectivamente final; véase {@code Parcel09}).
      */
     public static Comparator<Actividad> porTarifa(final int unidades) {
-        // TODO E10: Devolver new Comparator<>() { compare(a, b) → Double.compare(a.tarifa(unidades), b.tarifa(unidades)) }.
-        throw new UnsupportedOperationException("TODO E10");
+        return new Comparator<Actividad>() {
+            @Override
+            public int compare(Actividad o1, Actividad o2) {
+                return Double.compare(o1.tarifa(unidades),o2.tarifa(unidades));
+            }
+        };
+
+        // HECHO TODO E10: Devolver new Comparator<>() { compare(a, b) → Double.compare(a.tarifa(unidades), b.tarifa(unidades)) }.
+
     }
 
     /** Resumen calculado con una <strong>clase local</strong> (véase {@code Parcel05}). */
     public String resumen() {
-        // TODO E10: Declarar dentro del método la clase local Acumulador (cuenta, suma, mínimo, máximo) y recorrer el catálogo.
-        throw new UnsupportedOperationException("TODO E10");
+        class Acumulador{
+           private int cuenta;
+            private double suma;
+            private double minimo ;
+            private double maximo;
+
+            void agregar(Actividad actividad){
+                double precio=actividad.precioBase();
+                cuenta++;
+                suma+=precio;
+                minimo=Math.min(minimo,precio);
+                maximo=Math.max(maximo,precio);
+            }
+        }
+        Acumulador ac=new Acumulador();
+        for (Actividad a: elementos.values()){
+            ac.agregar(a);
+        }
+        double minimo= ac.cuenta==0 ? 0.0: ac.minimo;
+        double maximo= ac.cuenta==0?0.0:ac.maximo;
+        return "%d elementos, suma=%.2f, mínimo=%.2f, máximo=%.2f"
+                .formatted(
+                        ac.cuenta,
+                        ac.suma,
+                        minimo,
+                        maximo
+                );
+
+        //HECHO TODO E10: Declarar dentro del método la clase local Acumulador (cuenta, suma, mínimo, máximo) y recorrer el catálogo.
+
     }
 
     @Override
@@ -101,8 +146,12 @@ public class Programa implements Iterable<Actividad>, Serializable {
 
         @Override
         public Actividad next() {
-            // TODO E10: Lanzar NoSuchElementException si no hay siguiente; devolver el elemento y avanzar el cursor.
-            throw new UnsupportedOperationException("TODO E10");
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return instantanea.get(cursor++);
+            //HECHO  TODO E10: Lanzar NoSuchElementException si no hay siguiente; devolver el elemento y avanzar el cursor.
+
         }
     }
 }
