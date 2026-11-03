@@ -12,18 +12,20 @@ public final class Reglas {
     }
 
     public static Regla<Actividad> precioHasta(double maximo) {
-        // TODO E11: Lambda que acepta los elementos cuyo precioBase() sea menor o igual que maximo.
-        throw new UnsupportedOperationException("TODO E11");
+        return x->x.precioBase()<=maximo;
+        // HECHO TODO E11: Lambda que acepta los elementos cuyo precioBase() sea menor o igual que maximo.
+
     }
 
     public static Regla<Actividad> nombreContiene(String texto) {
-        // TODO E11: Lambda insensible a mayúsculas/minúsculas sobre nombre().
-        throw new UnsupportedOperationException("TODO E11");
+        // HECHO TODO E11: Lambda insensible a mayúsculas/minúsculas sobre nombre().
+        return x->x.nombre().toLowerCase().contains(texto);
     }
 
     /** Elementos que implementan una capacidad (p. ej. {@code ConInstructor.class}). */
     public static Regla<Actividad> conCapacidad(Class<?> capacidad) {
-        // TODO E11: Referencia a método de instancia particular: capacidad::isInstance.
-        throw new UnsupportedOperationException("TODO E11");
+        return capacidad::isInstance;
+        // HECHO TODO E11: Referencia a método de instancia particular: capacidad::isInstance.
+
     }
 }
