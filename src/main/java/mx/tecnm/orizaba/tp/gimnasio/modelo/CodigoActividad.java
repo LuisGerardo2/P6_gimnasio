@@ -69,7 +69,7 @@ public record CodigoActividad(String prefijo, int numero) implements Comparable<
     /** Convierte un texto {@code ABC-0001} en una clave. */
     public static CodigoActividad parse(String texto) {
         if (texto == null || !texto.matches("[A-Z]{3}-\\d{4,}")) {
-            throw new UnsupportedOperationException("No tiene el formato establecido");
+            throw new IllegalArgumentException("No tiene el formato establecido");
         }
 
         String prefijo = texto.substring(0, 3);

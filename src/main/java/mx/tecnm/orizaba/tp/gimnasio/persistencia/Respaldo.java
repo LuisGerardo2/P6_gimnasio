@@ -30,6 +30,7 @@ public final class Respaldo {
     /** Contenido recuperado de un respaldo. */
     public record Contenido(String encabezado, LocalDateTime fecha, Programa catalogo,
                             List<Miembro> miembros, List<Inscripcion> registros) {
+
     }
 
     public static void exportar(Path archivo, Programa catalogo, Collection<Miembro> miembros,
@@ -40,11 +41,9 @@ public final class Respaldo {
             salida.writeObject(LocalDateTime.now());
 
             salida.writeObject(catalogo);
-
             salida.writeObject(new ArrayList<>(miembros));
             salida.writeObject(new ArrayList<>(registros));
         }
-
 
         // HECHO TODO E14: ObjectOutputStream(BufferedOutputStream(Files.newOutputStream)): encabezado, fecha, catálogo, listas.
 
@@ -52,26 +51,25 @@ public final class Respaldo {
 
     @SuppressWarnings("unchecked")
     public static Contenido importar(Path archivo) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream entrada =
-                     new ObjectInputStream(
-                             new BufferedInputStream(
-                                     Files.newInputStream(archivo)))) {
-
+        try (ObjectInputStream entrada = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(archivo)))){
             String encabezado = entrada.readUTF();
 
             if (!ENCABEZADO.equals(encabezado)) {
                 throw new IOException(
-                        "Archivo de respaldo no válido: " + encabezado
+                        "Formato de respaldo no reconocido"
                 );
             }
+
             LocalDateTime fecha = (LocalDateTime) entrada.readObject();
+
             Programa catalogo = (Programa) entrada.readObject();
+
             List<Miembro> miembros = (List<Miembro>) entrada.readObject();
+
             List<Inscripcion> registros = (List<Inscripcion>) entrada.readObject();
 
-            return new Contenido(encabezado, fecha, catalogo, miembros, registros);
+            return new Contenido(encabezado,fecha, catalogo, miembros,registros);
         }
-        //HECHO TODO E14: Leer en el mismo orden; validar el encabezado (IOException si no coincide).
-
     }
-}
+} //HECHO TODO E14: Leer en el mismo orden; validar el encabezado (IOException si no coincide).
+

@@ -26,12 +26,10 @@ public interface Contratable {
 
     /** Método por defecto (extensión de la interfaz sin romper implementaciones). */
     default double tarifaConImpuesto(int unidades) {
-        if(unidades<=0 ){throw new UnsupportedOperationException("Las unidades deben ser positivas y mayores de 0");}
-
-        BigDecimal bd= new BigDecimal(Double.toString(unidades*TASA_IMPUESTO));
+        BigDecimal bd= new BigDecimal(Double.toString(tarifa(unidades)*(1+TASA_IMPUESTO)));
         bd = bd.setScale(2, RoundingMode.HALF_UP);
-
         return bd.doubleValue();
+
         // TODO E02: Aplicar TASA_IMPUESTO a tarifa(unidades) y redondear a 2 decimales.
 
     }

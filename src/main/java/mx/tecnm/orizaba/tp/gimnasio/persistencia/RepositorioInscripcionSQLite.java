@@ -36,12 +36,9 @@ public class RepositorioInscripcionSQLite implements Repositorio<Inscripcion, In
     public void guardar(Inscripcion t) {
         bd.enTransaccion(c -> {
             String sql= """
-                    INSERT INTO inscripcion(id, miembro_id, fecha, estado) " +
-                                                "VALUES (?, ?, ?, ?) "
-                                                + "ON CONFLICT(id) DO UPDATE SET " +
-                                                "miembro_id = excluded.miembro_id, "+
-                                                "fecha = excluded.fecha, " +
-                                                "estado = excluded.estado
+                    INSERT INTO inscripcion(id, miembro_id, fecha, estado) 
+                    VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET 
+                    miembro_id = excluded.miembro_id,fecha = excluded.fecha,estado = excluded.estado
                     """;
             try (PreparedStatement ps = c.prepareStatement(sql)) {
                 ps.setInt(1, t.id());
@@ -116,8 +113,7 @@ public class RepositorioInscripcionSQLite implements Repositorio<Inscripcion, In
         Inscripcion t = new Inscripcion(id, miembro, fecha);
 
         String sql= """
-                SELECT clave_actividad, unidades FROM inscripcion_linea WHERE inscripcion_id = ? "
-                                        + "ORDER BY clave_actividad
+                SELECT clave_actividad, unidades FROM inscripcion_linea WHERE inscripcion_id = ? ORDER BY clave_actividad
                 """;
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {

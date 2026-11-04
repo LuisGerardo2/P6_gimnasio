@@ -22,6 +22,7 @@ public interface Regla<T> {
     }
 
     default Regla<T> o(Regla<? super T> otra) {
+        Objects.requireNonNull(otra);
         return x->evaluar(x) || otra.evaluar(x);
         // HECHO TODO E11: Devolver la lambda t -> evaluar(t) || otra.evaluar(t).
 

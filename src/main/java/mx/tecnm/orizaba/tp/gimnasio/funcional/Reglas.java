@@ -2,6 +2,8 @@ package mx.tecnm.orizaba.tp.gimnasio.funcional;
 
 import mx.tecnm.orizaba.tp.gimnasio.modelo.Actividad;
 
+import java.util.Locale;
+
 /**
  * Biblioteca de reglas reutilizables (clase utilitaria no instanciable).
  */
@@ -19,7 +21,7 @@ public final class Reglas {
 
     public static Regla<Actividad> nombreContiene(String texto) {
         // HECHO TODO E11: Lambda insensible a mayúsculas/minúsculas sobre nombre().
-        return x->x.nombre().toLowerCase().contains(texto);
+        return x->x.nombre().toLowerCase().contains(texto.toLowerCase());
     }
 
     /** Elementos que implementan una capacidad (p. ej. {@code ConInstructor.class}). */

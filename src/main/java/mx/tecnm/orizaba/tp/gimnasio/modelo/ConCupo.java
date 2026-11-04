@@ -11,6 +11,6 @@ public interface ConCupo {
     int cupoMaximo();
 
     default String descripcionCorta() {
-        return "Cupo maximo: "+cupoMaximo();
+        return "Cupo máximo: "+cupoMaximo();
     }
 }

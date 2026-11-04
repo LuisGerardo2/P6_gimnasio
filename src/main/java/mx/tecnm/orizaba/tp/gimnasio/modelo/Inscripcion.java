@@ -95,12 +95,13 @@ public class Inscripcion implements Iterable<Inscripcion.Linea>, Serializable {
 
     /** Quita la línea del actividad indicado (sólo en estado ABIERTA). */
     public synchronized boolean quitar(CodigoActividad clave) {
-        if (estado==Estado.ABIERTA) {
-            return lineas.removeIf(x->x.elemento.clave().equals(clave));
+        if (estado != Estado.ABIERTA) {
+            throw new ReglaNegocioException("Se necesita estado Abierta(Inscripcion 99)");
         }
+        return lineas.removeIf(x->x.elemento.clave().equals(clave));
 
         //HECHO TODO E07: Exigir estado ABIERTA y eliminar con removeIf la línea cuyo elemento tenga esa clave.
-        throw new UnsupportedOperationException("TODO E07");
+
     }
 
     public synchronized void cambiarEstado(Estado destino) {

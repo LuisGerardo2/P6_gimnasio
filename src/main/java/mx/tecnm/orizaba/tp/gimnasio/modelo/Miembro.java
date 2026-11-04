@@ -77,14 +77,20 @@ public class Miembro implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput salida) throws IOException {
-        // TODO E14: Escribir id, nombre, correo y el nombre del nivel (writeInt / writeUTF).
-        throw new UnsupportedOperationException("TODO E14");
+        //HECHO TODO E14: Escribir id, nombre, correo y el nombre del nivel (writeInt / writeUTF).
+        salida.write(id);
+        salida.writeUTF(nombre);
+        salida.writeUTF(correo);
+        salida.writeUTF(nivel.name());
     }
 
     @Override
     public void readExternal(ObjectInput entrada) throws IOException {
-        // TODO E14: Leer en el mismo orden en que se escribió y reconstruir el nivel con Nivel.valueOf.
-        throw new UnsupportedOperationException("TODO E14");
+        //HECHO TODO E14: Leer en el mismo orden en que se escribió y reconstruir el nivel con Nivel.valueOf.
+        id = entrada.readInt();
+        nombre = entrada.readUTF();
+        correo = entrada.readUTF();
+        nivel = Nivel.valueOf(entrada.readUTF());
     }
 
     @Override

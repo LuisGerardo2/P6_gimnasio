@@ -76,7 +76,7 @@ public final class PruebasModelo {
             CodigoActividad c = CodigoActividad.parse("ABC-0042");
             verificar(c.toString().equals("ABC-0042"), "toString");
             verificar(c.compareTo(new CodigoActividad("ABC", 43)) < 0, "orden");
-            lanza(IllegalArgumentException.class, () -> new CodigoActividad("ab", 1));
+            lanza(IllegalArgumentException.class, () -> new CodigoActividad("ac", 1));
             lanza(IllegalArgumentException.class, () -> CodigoActividad.parse("ABC_1"));
         });
 
@@ -172,10 +172,10 @@ public final class PruebasModelo {
                 oos.writeObject(x);
             }
             try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
-                Actividad a2 = (Actividad) ois.readObject();
-                Miembro x2 = (Miembro) ois.readObject();
-                verificar(a2.equals(a) && a2.cotizaciones() == 0 && a.cotizaciones() == 1, "transient");
-                verificar(x2.correo().equals("ada@ito.mx") && x2.nivel() == Nivel.values()[1], "externalizable");
+               Actividad a2 = (Actividad) ois.readObject();
+               Miembro x2 = (Miembro) ois.readObject();
+               verificar(a2.equals(a) && a2.cotizaciones() == 0 && a.cotizaciones() == 1, "transient");
+               verificar(x2.correo().equals("ada@ito.mx") && x2.nivel() == Nivel.values()[1], "externalizable");
             }
         });
 
