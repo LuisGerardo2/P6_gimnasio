@@ -78,7 +78,7 @@ public class Miembro implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput salida) throws IOException {
         //HECHO TODO E14: Escribir id, nombre, correo y el nombre del nivel (writeInt / writeUTF).
-        salida.write(id);
+        salida.writeInt(id);
         salida.writeUTF(nombre);
         salida.writeUTF(correo);
         salida.writeUTF(nivel.name());
