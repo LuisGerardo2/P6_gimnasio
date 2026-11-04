@@ -84,10 +84,34 @@ public final class ConexionSQLite implements AutoCloseable {
      * Ejecuta un trabajo dentro de una transacción: confirma si termina bien y revierte ante error.
      */
     public <R> R enTransaccion(TrabajoSQL<R> trabajo) {
+        try {
+            conexion.setAutoCommit(false);
+            try {
+                R resultado = trabajo.ejecutar(conexion);
+                conexion.commit();
+                return resultado;
+            } catch (SQLException e) {
+                try {
+                    conexion.rollback();
+                } catch (SQLException ex) {
+                    e.addSuppressed(ex);
+                }
+                throw new PersistenciaException("Error en la transacción, se hizo rollback", e);
+            } finally {
+                try {
+                    conexion.setAutoCommit(true);
+                } catch (SQLException e) {
+                    throw new PersistenciaException("No se pudo restaurar el autocommit", e);
 
+                }
+            }
+        } catch (SQLException e) {
+            // fallo al hacer setAutoCommit(false)
+            throw new PersistenciaException("No se pudo iniciar la transacción", e);
+        }
 
-        // TODO E13: setAutoCommit(false); ejecutar; commit; ante SQLException rollback y PersistenciaException; finalmente setAutoCommit(true).
-        throw new UnsupportedOperationException("TODO E13");
+        //HECHO TODO E13: setAutoCommit(false); ejecutar; commit; ante SQLException rollback y PersistenciaException; finalmente setAutoCommit(true).
+
     }
 
     /** Interfaz funcional miembro: trabajo que puede lanzar {@link SQLException}. */

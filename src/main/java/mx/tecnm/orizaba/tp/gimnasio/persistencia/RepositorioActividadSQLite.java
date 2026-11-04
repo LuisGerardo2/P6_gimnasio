@@ -48,31 +48,95 @@ public class RepositorioActividadSQLite implements Repositorio<Actividad, Codigo
 
     /** Atributo específico del subtipo, obtenido con pattern matching. */
     static String atributoDe(Actividad e) {
-        // TODO E13: switch (e) { case Actividad.ClaseGrupal x -> ...; ... } sin default (la jerarquía es sellada).
-        throw new UnsupportedOperationException("TODO E13");
+        return switch (e){
+            case Actividad.ClaseGrupal x-> x.disciplina();
+            case Actividad.AccesoLibre x->x.turno();
+            case Actividad.Entrenamiento x->Integer.toString(x.intensidad());
+
+        };
+        // HECHO TODO E13: switch (e) { case Actividad.ClaseGrupal x -> ...; ... } sin default (la jerarquía es sellada).
+
     }
 
     @Override
     public void guardar(Actividad e) {
-        // TODO E13: INSERT ... ON CONFLICT(clave) DO UPDATE ... con PreparedStatement.
-        throw new UnsupportedOperationException("TODO E13");
+        String sql = """
+                    INSERT INTO actividad (clave, tipo, nombre, precio_base, atributo)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON CONFLICT(clave) DO UPDATE SET
+                        tipo = excluded.tipo,
+                        nombre = excluded.nombre,
+                        precio_base = excluded.precio_base,
+                        atributo = excluded.atributo
+                    """;
+
+        try (PreparedStatement ps = bd.conexion().prepareStatement(sql)){
+            ps.setString(1, e.clave().toString());
+            ps.setString(2, e.tipo());
+            ps.setString(3, e.nombre());
+            ps.setDouble(4, e.precioBase());
+            ps.setString(5, atributoDe(e));
+
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al guardar", ex);
+        }
+
+
+        // HECHO TODO E13: INSERT ... ON CONFLICT(clave) DO UPDATE ... con PreparedStatement.
+
     }
 
     @Override
     public Optional<Actividad> buscar(CodigoActividad clave) {
-        // TODO E13: SELECT por clave; mapear con mapeador si hay fila.
-        throw new UnsupportedOperationException("TODO E13");
+        String sql = "SELECT * FROM actividad WHERE clave = ?";
+        try (PreparedStatement ps = bd.conexion().prepareStatement(sql)) {
+            ps.setString(1, clave.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(mapeador.mapear(rs)) : Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al buscar la actividad", ex);
+        }
+
+        //HECHO TODO E13: SELECT por clave; mapear con mapeador si hay fila.
+
     }
 
     @Override
     public List<Actividad> todos() {
-        // TODO E13: SELECT ordenado por clave; mapear cada fila.
-        throw new UnsupportedOperationException("TODO E13");
+        List<Actividad> lista = new ArrayList<>();
+        try (PreparedStatement ps = bd.conexion().prepareStatement("SELECT * FROM actividad ORDER BY clave");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapeador.mapear(rs));
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al listar actividades", ex);
+        }
+        return lista;
+        //HECHO TODO E13: SELECT ordenado por clave; mapear cada fila.
+
     }
 
     @Override
     public boolean eliminar(CodigoActividad clave) {
-        // TODO E13: DELETE por clave; devolver si se afectó alguna fila.
-        throw new UnsupportedOperationException("TODO E13");
+        String sql = """
+                DELETE FROM actividad
+                WHERE clave = ?
+                """;
+
+        try(PreparedStatement ps = bd.conexion().prepareStatement(sql)){
+
+            ps.setString(1, clave.toString());
+            int filas = ps.executeUpdate();
+
+            return filas>0;
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al buscar", e);
+        }
+        //HECHO TODO E13: DELETE por clave; devolver si se afectó alguna fila.
+
     }
 }
