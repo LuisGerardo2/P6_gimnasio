@@ -107,7 +107,7 @@ public class RepositorioMiembroSQLite implements Repositorio<Miembro, Integer> {
     @Override
     public boolean eliminar(Integer id) {
         String sql = """
-                DELETE FROM miembro
+                DELETE FROM miembros
                 WHERE id = ?
             
                 """;

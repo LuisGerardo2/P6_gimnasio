@@ -34,13 +34,44 @@ public final class Respaldo {
 
     public static void exportar(Path archivo, Programa catalogo, Collection<Miembro> miembros,
                                 Collection<Inscripcion> registros) throws IOException {
-        // TODO E14: ObjectOutputStream(BufferedOutputStream(Files.newOutputStream)): encabezado, fecha, catálogo, listas.
-        throw new UnsupportedOperationException("TODO E14");
+        try (ObjectOutputStream salida = new ObjectOutputStream( new BufferedOutputStream(Files.newOutputStream(archivo)))){
+            salida.writeUTF(ENCABEZADO);
+
+            salida.writeObject(LocalDateTime.now());
+
+            salida.writeObject(catalogo);
+
+            salida.writeObject(new ArrayList<>(miembros));
+            salida.writeObject(new ArrayList<>(registros));
+        }
+
+
+        // HECHO TODO E14: ObjectOutputStream(BufferedOutputStream(Files.newOutputStream)): encabezado, fecha, catálogo, listas.
+
     }
 
     @SuppressWarnings("unchecked")
     public static Contenido importar(Path archivo) throws IOException, ClassNotFoundException {
-        // TODO E14: Leer en el mismo orden; validar el encabezado (IOException si no coincide).
-        throw new UnsupportedOperationException("TODO E14");
+        try (ObjectInputStream entrada =
+                     new ObjectInputStream(
+                             new BufferedInputStream(
+                                     Files.newInputStream(archivo)))) {
+
+            String encabezado = entrada.readUTF();
+
+            if (!ENCABEZADO.equals(encabezado)) {
+                throw new IOException(
+                        "Archivo de respaldo no válido: " + encabezado
+                );
+            }
+            LocalDateTime fecha = (LocalDateTime) entrada.readObject();
+            Programa catalogo = (Programa) entrada.readObject();
+            List<Miembro> miembros = (List<Miembro>) entrada.readObject();
+            List<Inscripcion> registros = (List<Inscripcion>) entrada.readObject();
+
+            return new Contenido(encabezado, fecha, catalogo, miembros, registros);
+        }
+        //HECHO TODO E14: Leer en el mismo orden; validar el encabezado (IOException si no coincide).
+
     }
 }

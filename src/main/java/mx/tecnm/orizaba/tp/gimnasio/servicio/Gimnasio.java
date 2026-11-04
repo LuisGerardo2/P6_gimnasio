@@ -24,13 +24,7 @@ import mx.tecnm.orizaba.tp.gimnasio.persistencia.Respaldo;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -38,6 +32,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Fachada del dominio (capa de servicio). <strong>La UI sólo debe depender de esta clase</strong>
@@ -72,13 +67,22 @@ public class Gimnasio implements AutoCloseable {
 
     /** @param reloj proveedor de la fecha actual (inyectable para pruebas y simulación) */
     public Gimnasio(ConexionSQLite bd, Supplier<LocalDate> reloj) {
-        // TODO E15: Crear los tres repositorios SQLite, asignar el reloj y cargar los datos existentes en memoria.
-        throw new UnsupportedOperationException("TODO E15");
+       this.repoElementos=new RepositorioActividadSQLite(bd);
+       this.repoMiembros=new RepositorioMiembroSQLite(bd);
+       this.repoRegistros=new RepositorioInscripcionSQLite(bd,repoMiembros,repoElementos);
+       this.reloj=reloj;
+       cargar();
+        // HECHO TODO E15: Crear los tres repositorios SQLite, asignar el reloj y cargar los datos existentes en memoria.
+
     }
 
     private void cargar() {
-        // TODO E15: Usar referencias a método: repoElementos.todos().forEach(catalogo::agregar), etc.
-        throw new UnsupportedOperationException("TODO E15");
+        repoElementos.todos().forEach(catalogo::agregar);
+        repoMiembros.todos().forEach(x->miembros.put(x.id(),x));
+        repoRegistros.todos().forEach(x->registros.put(x.id(),x));
+
+        // HECHO TODO E15: Usar referencias a método: repoElementos.todos().forEach(catalogo::agregar), etc.
+
     }
 
     // ------------------------------------------------------------------ eventos
@@ -103,8 +107,17 @@ public class Gimnasio implements AutoCloseable {
      * Ejemplo: {@code registrar(Actividad.ClaseGrupal::new, "...", 100.0, "Spinning")}.
      */
     public <E extends Actividad, A> E registrar(FabricaElemento<E, A> fabrica, String nombre, double precio, A atributo) {
-        // TODO E15: Crear con la fábrica, persistir, agregar al catálogo, publicar ALTA y devolver el elemento.
-        throw new UnsupportedOperationException("TODO E15");
+
+        E elemento = fabrica.crear(nombre, precio, atributo);
+
+        repoElementos.guardar(elemento);
+        catalogo.agregar(elemento);
+
+        publicar(TipoEvento.ALTA, "Actividad registrada: " + elemento.clave() + " " + elemento.nombre());
+        return elemento;
+
+        //HECHO TODO E15: Crear con la fábrica, persistir, agregar al catálogo, publicar ALTA y devolver el elemento.
+
     }
 
     public void actualizar(Actividad elemento, String nombre, double precio) {
@@ -114,8 +127,22 @@ public class Gimnasio implements AutoCloseable {
     }
 
     public boolean retirar(CodigoActividad clave) {
-        // TODO E15: Impedir retirar elementos referenciados por algún registro; eliminar de la BD y del catálogo.
-        throw new UnsupportedOperationException("TODO E15");
+        boolean referenciado = registros.values().stream().flatMap(t -> t.lineas().stream()).anyMatch(
+                l -> l.elemento().clave().equals(clave));
+
+        if (referenciado) {
+            throw new ReglaNegocioException("No se puede retirar " + clave + ": está en una inscripción");
+        }
+
+        boolean eliminar = repoElementos.eliminar(clave);
+        if(eliminar){
+            catalogo.retirar(clave);
+        }
+
+        return eliminar ;
+
+        // HECHO TODO E15: Impedir retirar elementos referenciados por algún registro; eliminar de la BD y del catálogo.
+
     }
 
     public Programa catalogo() {
@@ -130,8 +157,23 @@ public class Gimnasio implements AutoCloseable {
     // ------------------------------------------------------------------ miembros
 
     public Miembro registrarMiembro(String nombre, String correo, Nivel nivel) {
-        // TODO E15: Rechazar correos repetidos; id = máximo actual + 1 (stream mapToInt/max); persistir y publicar ALTA.
-        throw new UnsupportedOperationException("TODO E15");
+        boolean repetido = miembros.values().stream().anyMatch(s -> s.correo().equalsIgnoreCase(correo));
+
+        if (repetido) {
+            throw new ReglaNegocioException("Ya existe un socio con ese correo");
+        }
+
+        int id = miembros.values().stream().mapToInt(Miembro::id).max().orElse(0)+1;
+        Miembro miembro = new Miembro(id, nombre,correo,nivel);
+
+        repoMiembros.guardar(miembro);
+        miembros.put(id,miembro);
+        publicar(TipoEvento.ALTA, "Socio registro" +miembro.nombre());
+
+        return miembro;
+
+        //HECHO TODO E15: Rechazar correos repetidos; id = máximo actual + 1 (stream mapToInt/max); persistir y publicar ALTA.
+
     }
 
     public void cambiarNivel(int idMiembro, Nivel nivel) {
@@ -152,13 +194,36 @@ public class Gimnasio implements AutoCloseable {
     // ------------------------------------------------------------------ inscripciones
 
     public Inscripcion abrir(int idMiembro) {
-        // TODO E15: Crear el registro con la fecha del reloj, persistir, guardar en el mapa y publicar CAMBIO_ESTADO.
-        throw new UnsupportedOperationException("TODO E15");
+        Miembro miembro = miembro(idMiembro);
+
+        int id = registros.values().stream().mapToInt(Inscripcion::id).max().orElse(0)+1;
+
+        Inscripcion inscripcion = new Inscripcion(id, miembro,reloj.get());
+
+        repoRegistros.guardar(inscripcion);
+        registros.put(id,inscripcion);
+
+        publicar(TipoEvento.CAMBIO_ESTADO, "prestamo abierto" + id);
+
+        return inscripcion;
+
+        // HECHO TODO E15: Crear el registro con la fecha del reloj, persistir, guardar en el mapa y publicar CAMBIO_ESTADO.
+
     }
 
     public Inscripcion.Linea agregarLinea(int idInscripcion, String clave, int unidades) {
-        // TODO E15: Localizar registro y elemento, agregar la línea y persistir.
-        throw new UnsupportedOperationException("TODO E15");
+        Inscripcion inscripcion = registro(idInscripcion);
+
+        Actividad actividad = elemento(clave);
+
+        Inscripcion.Linea linea = inscripcion.agregar(actividad, unidades);
+
+        repoRegistros.guardar(inscripcion);
+
+        return linea;
+
+        //HECHO TODO E15: Localizar registro y elemento, agregar la línea y persistir.
+
     }
 
     public boolean quitarLinea(int idInscripcion, String clave) {
@@ -182,8 +247,17 @@ public class Gimnasio implements AutoCloseable {
 
     /** Orden superior: la transición concreta llega como {@link Consumer} (referencia a método). */
     private void transitar(int id, Consumer<Inscripcion> transicion) {
-        // TODO E15: Aplicar la transición, persistir y publicar CAMBIO_ESTADO.
-        throw new UnsupportedOperationException("TODO E15");
+        Inscripcion inscripcion = registro(id);
+
+        transicion.accept(inscripcion);
+
+        repoRegistros.guardar(inscripcion);
+
+        publicar(TipoEvento.CAMBIO_ESTADO, "Inscripcion" + id +"cambio a " + inscripcion.estado());
+
+
+        //HECHO TODO E15: Aplicar la transición, persistir y publicar CAMBIO_ESTADO.
+
     }
     
     public Inscripcion registro(int id) {
@@ -207,30 +281,43 @@ public class Gimnasio implements AutoCloseable {
 
     /** Ingresos por subtipo (sólo registros cerrados). */
     public Map<String, Double> ingresosPorTipo() {
-        // TODO E16: flatMap de líneas; groupingBy(tipo, TreeMap::new, summingDouble(importe)).
-        throw new UnsupportedOperationException("TODO E16");
+        return cerrados().flatMap(p-> p.lineas().stream())
+                .collect(Collectors.groupingBy(linea -> linea.elemento().tipo(), TreeMap::new, Collectors.summingDouble(Inscripcion.Linea::importe)));
+
+        //HECHO  TODO E16: flatMap de líneas; groupingBy(tipo, TreeMap::new, summingDouble(importe)).
+
     }
 
     /** El actividad con más unidades en registros cerrados. */
     public Optional<Actividad> masDemandado() {
-        // TODO E16: groupingBy(elemento, summingInt(unidades)) y máximo por valor con Map.Entry.comparingByValue().
-        throw new UnsupportedOperationException("TODO E16");
+        // HECHO TODO E16: groupingBy(elemento, summingInt(unidades)) y máximo por valor con Map.Entry.comparingByValue().
+        return cerrados().flatMap(p->p.lineas().stream())
+                .collect(Collectors.groupingBy(Inscripcion.Linea::elemento, Collectors.summingInt(Inscripcion.Linea::unidades)))
+                .entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
+
     }
 
     /** Los {@code n} miembros con mayor importe acumulado. */
     public List<Miembro> mejores(int n) {
-        // TODO E16: groupingBy(actor, summingDouble(total)); ordenar descendentemente por valor; limit(n).
-        throw new UnsupportedOperationException("TODO E16");
+        return cerrados().collect(Collectors.groupingBy(Inscripcion::miembro,Collectors.summingDouble(Inscripcion::total)))
+                .entrySet().stream().sorted(Map.Entry.<Miembro,Double> comparingByValue().reversed() )
+                .limit(n).map(Map.Entry::getKey).toList();
+        //HECHO TODO E16: groupingBy(actor, summingDouble(total)); ordenar descendentemente por valor; limit(n).
+
     }
 
     public DoubleSummaryStatistics estadisticas() {
-        // TODO E16: mapToDouble(Inscripcion::total).summaryStatistics() sobre los cerrados.
-        throw new UnsupportedOperationException("TODO E16");
+        return cerrados().mapToDouble(Inscripcion::total).summaryStatistics();
+
+        // HECHO TODO E16: mapToDouble(Inscripcion::total).summaryStatistics() sobre los cerrados.
+
     }
 
     public Map<Boolean, List<Actividad>> particionarPorPrecio(double umbral) {
-        // TODO E16: partitioningBy(e -> e.precioBase() >= umbral).
-        throw new UnsupportedOperationException("TODO E16");
+        // HECHO TODO E16: partitioningBy(e -> e.precioBase() >= umbral).
+        return StreamSupport.stream(catalogo.spliterator(),false)
+                .collect(Collectors.partitioningBy(e->e.precioBase() >= umbral));
+
     }
 
     public Map<Estado, Long> conteoPorEstado() {
@@ -244,14 +331,30 @@ public class Gimnasio implements AutoCloseable {
 
     /** Proyección genérica (orden superior). */
     public <R> List<R> proyectar(Function<? super Actividad, ? extends R> funcion) {
-        // TODO E16: Recorrer el catálogo ordenado por clave y aplicar map(funcion).
-        throw new UnsupportedOperationException("TODO E16");
+        return catalogo.ordenados(Comparator.comparing(Actividad::clave)).stream().<R>map(funcion).toList();
+
+        // HECHO TODO E16: Recorrer el catálogo ordenado por clave y aplicar map(funcion).
+
     }
 
     /** Descripción con <em>pattern matching</em> exhaustivo sobre la jerarquía sellada (sin default). */
     public String describir(Actividad e) {
-        // TODO E16: switch (e) con un caso por subtipo y al menos un caso con guarda "when".
-        throw new UnsupportedOperationException("TODO E16");
+        return switch (e){
+
+                case Actividad.ClaseGrupal claseGrupal -> "ClaseGrupal %s [%s]: %s, $%.2f por sesión (%s)".formatted(
+                        claseGrupal.nombre(), claseGrupal.clave(), claseGrupal.disciplina(), claseGrupal.precioBase(), claseGrupal.descripcionCorta());
+                case Actividad.Entrenamiento entrenamiento when entrenamiento.intensidad() >= 4 ->
+                        "Entrenamiento INTENSO %s [%s]: nivel %d, $%.2f por sesión (%s)".formatted(
+                        entrenamiento.nombre(), entrenamiento.clave(), entrenamiento.intensidad(), entrenamiento.precioBase(), entrenamiento.descripcionCorta());
+                case Actividad.Entrenamiento entrenamiento ->
+                        "Entrenamiento %s [%s]: nivel %d, $%.2f por sesión (%s)".formatted(
+                        entrenamiento.nombre(), entrenamiento.clave(), entrenamiento.intensidad(), entrenamiento.precioBase(), entrenamiento.descripcionCorta());
+                case Actividad.AccesoLibre accesoLibre ->
+                        "AccesoLibre %s [%s]: turno %s, $%.2f por sesión, tope 12 (%s)".formatted(
+                        accesoLibre.nombre(), accesoLibre.clave(), accesoLibre.turno(), accesoLibre.precioBase(), accesoLibre.descripcionCorta());
+            };
+        //HECHO TODO E16: switch (e) con un caso por subtipo y al menos un caso con guarda "when".
+
     }
 
     // ------------------------------------------------------------------ monitor
@@ -264,13 +367,46 @@ public class Gimnasio implements AutoCloseable {
      * @return número de acciones realizadas
      */
     public synchronized int revisar() {
-        // TODO E12: Recorrer los registros y aplicar las dos reglas con un switch sobre el estado.
-        throw new UnsupportedOperationException("TODO E12");
+        int acciones = 0;
+        LocalDate hoy = reloj.get();
+
+        for (Inscripcion inscripcion : registros.values()) {
+
+            long dias = inscripcion.diasDesde(hoy);
+            switch (inscripcion.estado()) {
+                case ABIERTA -> {
+                    if (inscripcion.lineas().isEmpty() && dias >= 1) {
+                        inscripcion.cancelar();
+                        repoRegistros.guardar(inscripcion);
+                        publicar(TipoEvento.CANCELACION_AUTOMATICA,
+                                "Inscripción sin actividades cancelada: #" + inscripcion.id());
+                        acciones++;
+                    }
+                }
+                case EN_CURSO -> {
+                    if (dias > PLAZO_DIAS && alertados.add(inscripcion.id())) {
+                        publicar(TipoEvento.ALERTA, "Renovación requerida para la inscripción #" + inscripcion.id()
+                                + " de " + inscripcion.miembro().nombre());
+                        acciones++;
+                    }
+                }
+                case CERRADA, CANCELADA -> {
+                    // estados terminales: nada que revisar
+                }
+            }
+        }
+        return acciones;
+        //HECHO TODO E12: Recorrer los registros y aplicar las dos reglas con un switch sobre el estado.
+
     }
 
     public synchronized void iniciarMonitor(long periodoMs) {
-        // TODO E12: Crear el monitor interno (new MonitorRenovaciones(periodoMs)) e iniciarlo con un nombre de hilo descriptivo.
-        throw new UnsupportedOperationException("TODO E12");
+        this.monitor = new MonitorRenovaciones(periodoMs);
+        this.monitor.iniciar("Monitor renovaciones");
+
+
+        // HECHO TODO E12: Crear el monitor interno (new MonitorRenovaciones(periodoMs)) e iniciarlo con un nombre de hilo descriptivo.
+
     }
 
     public void detenerMonitor() throws InterruptedException {
@@ -298,8 +434,9 @@ public class Gimnasio implements AutoCloseable {
 
         @Override
         protected void ejecutarCiclo() {
+            Gimnasio.this.revisar();
             // TODO E12: Delegar en la envolvente: Gimnasio.this.revisar().
-            throw new UnsupportedOperationException("TODO E12");
+
         }
     }
 
