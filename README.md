@@ -1,10 +1,14 @@
 # Miniproyecto 6: Gestión de Inscripciones de un Gimnasio
 
-Variante: **esqueleto**. Paquete raíz `mx.tecnm.orizaba.tp.gimnasio`. Java 21 + SQLite.
+Paquete principal `mx.tecnm.orizaba.tp.gimnasio`. 
+El primer comando compila y ejecuta todo el sistema
 
 ```
-mvn -q compile && mvn -q exec:java        # PruebasModelo
-mvn -q exec:java -Pdemo                    # DemoModelo
+mvn -q compile exec:java        # Sistema completo
+mvn -q exec:java -Pdemo          # Llenara y creara la 
+                                  base de datos sin ejecutar
+                                  todo el proyecto
+                                 
 ```
 
 Consulta el documento DOCX del proyecto para la especificación completa.
