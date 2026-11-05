@@ -1,43 +1,189 @@
 digraph G {
-  graph [rankdir=TB, splines=true, nodesep=0.35, ranksep=0.55, fontname="Helvetica", dpi=170, bgcolor="white"];
-  node [shape=plain, fontname="Helvetica", fontsize=10];
-  edge [fontname="Helvetica", color="#334155"];
-  Contrato [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DBEAFE" CELLPADDING="4"><FONT POINT-SIZE="9">«interface»</FONT><BR/><B>Contratable</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+TASA_IMPUESTO: double</U><BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+clave(): CodigoActividad</I><BR ALIGN="LEFT"/><I>+nombre(): String</I><BR ALIGN="LEFT"/><I>+precioBase(): double</I><BR ALIGN="LEFT"/><I>+tarifa(u: int): double</I><BR ALIGN="LEFT"/>+tarifaConImpuesto(u: int): double «default»<BR ALIGN="LEFT"/><U>+porNombre(): Comparator</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  CAP1 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DBEAFE" CELLPADDING="4"><FONT POINT-SIZE="9">«interface»</FONT><BR/><B>ConInstructor</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+instructor(): String</I><BR ALIGN="LEFT"/>+descripcionCorta(): String «default»<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  CAP2 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DBEAFE" CELLPADDING="4"><FONT POINT-SIZE="9">«interface»</FONT><BR/><B>ConCupo</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+cupoMaximo(): int</I><BR ALIGN="LEFT"/>+descripcionCorta(): String «default»<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Base [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«abstract sealed»</FONT><BR/><I><B>Actividad</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-clave: CodigoActividad<BR ALIGN="LEFT"/>-nombre: String<BR ALIGN="LEFT"/>-precioBase: double<BR ALIGN="LEFT"/>-creadoEn: LocalDateTime<BR ALIGN="LEFT"/>-cotizaciones: int «transient»<BR ALIGN="LEFT"/><U>-INSTANCIAS_CREADAS: AtomicInteger</U><BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">#Actividad(prefijo, nombre, precio)<BR ALIGN="LEFT"/>#Actividad(clave, nombre, precio)<BR ALIGN="LEFT"/>+tarifa(u: int): double «final»<BR ALIGN="LEFT"/><I>#calcularTarifa(u: int): double</I><BR ALIGN="LEFT"/><I>+copiar(): Actividad</I><BR ALIGN="LEFT"/>+setNombre(n: String)<BR ALIGN="LEFT"/>+setPrecioBase(p: double)<BR ALIGN="LEFT"/>+tipo(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  S1 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«static final»</FONT><BR/><B>Actividad.ClaseGrupal</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+PREFIJO = "CLG"</U><BR ALIGN="LEFT"/>-disciplina: String<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+ClaseGrupal(nombre, precio, disciplina: String)<BR ALIGN="LEFT"/>+disciplina(): String<BR ALIGN="LEFT"/>#calcularTarifa(u: int): double<BR ALIGN="LEFT"/>+copiar(): ClaseGrupal<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  S2 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«static final»</FONT><BR/><B>Actividad.Entrenamiento</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+PREFIJO = "ENT"</U><BR ALIGN="LEFT"/>-intensidad: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Entrenamiento(nombre, precio, intensidad: int)<BR ALIGN="LEFT"/>+intensidad(): int<BR ALIGN="LEFT"/>#calcularTarifa(u: int): double<BR ALIGN="LEFT"/>+copiar(): Entrenamiento<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  S3 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«static final»</FONT><BR/><B>Actividad.AccesoLibre</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+PREFIJO = "ACL"</U><BR ALIGN="LEFT"/>-turno: String<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+AccesoLibre(nombre, precio, turno: String)<BR ALIGN="LEFT"/>+turno(): String<BR ALIGN="LEFT"/>#calcularTarifa(u: int): double<BR ALIGN="LEFT"/>+copiar(): AccesoLibre<BR ALIGN="LEFT"/>+descripcionCorta(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Clave [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DCFCE7" CELLPADDING="4"><FONT POINT-SIZE="9">«record»</FONT><BR/><B>CodigoActividad</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">prefijo: String<BR ALIGN="LEFT"/>numero: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+siguiente(prefijo): CodigoActividad</U><BR ALIGN="LEFT"/><U>+registrar(c: CodigoActividad)</U><BR ALIGN="LEFT"/><U>+parse(texto): CodigoActividad</U><BR ALIGN="LEFT"/>+compareTo(o): int<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Nivel [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DCFCE7" CELLPADDING="4"><FONT POINT-SIZE="9">«enumeration»</FONT><BR/><B>Nivel</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">BASICO<BR ALIGN="LEFT"/>ESTUDIANTE<BR ALIGN="LEFT"/>PREMIUM<BR ALIGN="LEFT"/>-descuento: double<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+aplicar(monto): double<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Estado [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DCFCE7" CELLPADDING="4"><FONT POINT-SIZE="9">«enumeration»</FONT><BR/><B>Estado</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">ABIERTA<BR ALIGN="LEFT"/>EN_CURSO<BR ALIGN="LEFT"/>CERRADA<BR ALIGN="LEFT"/>CANCELADA<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+permiteTransicionA(d: Estado): boolean<BR ALIGN="LEFT"/>+esTerminal(): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Actor [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«Externalizable»</FONT><BR/><B>Miembro</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-id: int<BR ALIGN="LEFT"/>-nombre: String<BR ALIGN="LEFT"/>-correo: String<BR ALIGN="LEFT"/>-nivel: Nivel<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Miembro()<BR ALIGN="LEFT"/>+Miembro(id, nombre, correo, nivel)<BR ALIGN="LEFT"/>+writeExternal(out)<BR ALIGN="LEFT"/>+readExternal(in)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Txn [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«Serializable, Iterable»</FONT><BR/><B>Inscripcion</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-id: int<BR ALIGN="LEFT"/>-fecha: LocalDate<BR ALIGN="LEFT"/>-estado: Estado<BR ALIGN="LEFT"/>-lineas: List&lt;Linea&gt;<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+agregar(e: Actividad, u: int): Linea «sync»<BR ALIGN="LEFT"/>+quitar(c: CodigoActividad): boolean<BR ALIGN="LEFT"/>+cambiarEstado(d: Estado) «sync»<BR ALIGN="LEFT"/>+iniciar() / cerrar() / cancelar()<BR ALIGN="LEFT"/>+subtotal(): double<BR ALIGN="LEFT"/>+total(): double<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Linea [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«inner final»</FONT><BR/><B>Inscripcion.Linea</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-elemento: Actividad<BR ALIGN="LEFT"/>-unidades: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-Linea(e, u)<BR ALIGN="LEFT"/>+subtotal(): double<BR ALIGN="LEFT"/>+importe(): double<BR ALIGN="LEFT"/>+contenedor(): Inscripcion<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Cat [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«Serializable, Iterable»</FONT><BR/><B>Programa</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-elementos: Map&lt;CodigoActividad, Actividad&gt;<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Programa(iniciales: Actividad...)<BR ALIGN="LEFT"/>+agregar(nuevos: Actividad...)<BR ALIGN="LEFT"/>+filtrar(r: Regla): List<BR ALIGN="LEFT"/>+deTipo(t: Class&lt;E&gt;): List&lt;E&gt;<BR ALIGN="LEFT"/><U>+porTarifa(u: int): Comparator «anónima»</U><BR ALIGN="LEFT"/>+resumen(): String «clase local»<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Iter [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«private inner»</FONT><BR/><B>Programa.Iterador</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-cursor: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+hasNext(): boolean<BR ALIGN="LEFT"/>+next(): Actividad<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Regla [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«functional interface»</FONT><BR/><B>Regla&lt;T&gt;</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+evaluar(t: T): boolean</I><BR ALIGN="LEFT"/>+y(o) / o(o) / negar() «default»<BR ALIGN="LEFT"/><U>+de(p: Predicate): Regla</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  Fab [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«functional interface»</FONT><BR/><B>FabricaElemento&lt;E extends Actividad, A&gt;</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+crear(nombre, precio, atributo: A): E</I><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
-  RNE [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«exception»</FONT><BR/><B>ReglaNegocioException</B></TD></TR></TABLE>>];
-  Contrato -> Base [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
-  Base -> S1 [dir=back, arrowtail=empty, arrowhead=none, style=solid];
-  Base -> S2 [dir=back, arrowtail=empty, arrowhead=none, style=solid];
-  Base -> S3 [dir=back, arrowtail=empty, arrowhead=none, style=solid];
-  CAP1 -> S1 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
-  CAP2 -> S2 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
-  CAP1 -> S3 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
-  CAP2 -> S3 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
-  Base -> S1 [dir=back, arrowtail=odot, arrowhead=none, style=solid, color="#64748B", constraint=false];
-  Contrato -> Clave [arrowhead=vee, style=dashed, label=" usa", fontsize=9];
-  Txn -> Linea [dir=back, arrowtail=diamond, arrowhead=none, headlabel="1..*", taillabel="1", fontsize=9, label=" «inner»", fontname="Helvetica"];
-  Linea -> Base [arrowhead=vee, headlabel="1", fontsize=9];
-  Txn -> Actor [arrowhead=vee, headlabel="1", fontsize=9];
-  Txn -> Estado [arrowhead=vee];
-  Actor -> Nivel [arrowhead=vee];
-  Cat -> Base [dir=back, arrowtail=odiamond, arrowhead=none, headlabel="0..*", fontsize=9];
-  Cat -> Iter [dir=back, arrowtail=odot, arrowhead=none, style=solid, color="#64748B"];
-  Cat -> Regla [arrowhead=vee, style=dashed];
-  Fab -> Base [arrowhead=vee, style=dashed, label=" crea", fontsize=9];
-  Base -> RNE [arrowhead=vee, style=dashed, label=" lanza", fontsize=9];
+    graph [rankdir=TB, splines=true, nodesep=0.4, ranksep=0.6, fontname="Helvetica", dpi=170, bgcolor="white"];
+    node [shape=plain, fontname="Helvetica", fontsize=10];
+    edge [fontname="Helvetica", color="#334155"];
+
+    /* ================================================================== */
+    /* 1. PAQUETE MODELO: Interfaces, Clases Abstractas y Subtipos          */
+    /* ================================================================== */
+    Contrato [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DBEAFE" CELLPADDING="4"><FONT POINT-SIZE="9">«interface»</FONT><BR/><B>Contratable</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+TASA_IMPUESTO: double</U><BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+clave(): CodigoActividad</I><BR ALIGN="LEFT"/><I>+nombre(): String</I><BR ALIGN="LEFT"/><I>+precioBase(): double</I><BR ALIGN="LEFT"/><I>+tarifa(u: int): double</I><BR ALIGN="LEFT"/>+tarifaConImpuesto(u: int): double «default»<BR ALIGN="LEFT"/><U>+porNombre(): Comparator</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    CAP1 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DBEAFE" CELLPADDING="4"><FONT POINT-SIZE="9">«interface»</FONT><BR/><B>ConInstructor</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+instructor(): String</I><BR ALIGN="LEFT"/>+descripcionCorta(): String «default»<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    CAP2 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DBEAFE" CELLPADDING="4"><FONT POINT-SIZE="9">«interface»</FONT><BR/><B>ConCupo</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+cupoMaximo(): int</I><BR ALIGN="LEFT"/>+descripcionCorta(): String «default»<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Base [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«abstract sealed»</FONT><BR/><I><B>Actividad</B></I></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-clave: CodigoActividad<BR ALIGN="LEFT"/>-nombre: String<BR ALIGN="LEFT"/>-precioBase: double<BR ALIGN="LEFT"/>-creadoEn: LocalDateTime<BR ALIGN="LEFT"/>-cotizaciones: int «transient»<BR ALIGN="LEFT"/><U>-INSTANCIAS_CREADAS: AtomicInteger</U><BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">#Actividad(prefijo, nombre, precio)<BR ALIGN="LEFT"/>#Actividad(clave, nombre, precio)<BR ALIGN="LEFT"/>+instanciasCreadas(): int<BR ALIGN="LEFT"/>+tarifa(u: int): double «final»<BR ALIGN="LEFT"/><I>#calcularTarifa(u: int): double</I><BR ALIGN="LEFT"/><I>+copiar(): Actividad</I><BR ALIGN="LEFT"/>+setNombre(n: String)<BR ALIGN="LEFT"/>+setPrecioBase(p: double)<BR ALIGN="LEFT"/>+tipo(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    S1 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«static final»</FONT><BR/><B>Actividad.ClaseGrupal</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+PREFIJO = "CLG"</U><BR ALIGN="LEFT"/>-disciplina: String<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+ClaseGrupal(nombre, precio, disciplina)<BR ALIGN="LEFT"/>+ClaseGrupal(clave, nombre, precio, disciplina)<BR ALIGN="LEFT"/>+disciplina(): String<BR ALIGN="LEFT"/>#calcularTarifa(u: int): double<BR ALIGN="LEFT"/>+copiar(): ClaseGrupal<BR ALIGN="LEFT"/>+instructor(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    S2 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«static final»</FONT><BR/><B>Actividad.Entrenamiento</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+PREFIJO = "ENT"</U><BR ALIGN="LEFT"/>-intensidad: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Entrenamiento(nombre, precio, intensidad)<BR ALIGN="LEFT"/>+Entrenamiento(clave, nombre, precio, intensidad)<BR ALIGN="LEFT"/>+intensidad(): int<BR ALIGN="LEFT"/>#calcularTarifa(u: int): double<BR ALIGN="LEFT"/>+copiar(): Entrenamiento<BR ALIGN="LEFT"/>+cupoMaximo(): int<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    S3 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF3C7" CELLPADDING="4"><FONT POINT-SIZE="9">«static final»</FONT><BR/><B>Actividad.AccesoLibre</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+PREFIJO = "ACL"</U><BR ALIGN="LEFT"/>-turno: String<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+AccesoLibre(nombre, precio, turno)<BR ALIGN="LEFT"/>+AccesoLibre(clave, nombre, precio, turno)<BR ALIGN="LEFT"/>+turno(): String<BR ALIGN="LEFT"/>#calcularTarifa(u: int): double<BR ALIGN="LEFT"/>+copiar(): AccesoLibre<BR ALIGN="LEFT"/>+instructor(): String<BR ALIGN="LEFT"/>+cupoMaximo(): int<BR ALIGN="LEFT"/>+descripcionCorta(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Clave [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DCFCE7" CELLPADDING="4"><FONT POINT-SIZE="9">«record»</FONT><BR/><B>CodigoActividad</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">prefijo: String<BR ALIGN="LEFT"/>numero: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+siguiente(prefijo): CodigoActividad</U><BR ALIGN="LEFT"/><U>+registrar(c: CodigoActividad)</U><BR ALIGN="LEFT"/><U>+parse(texto): CodigoActividad</U><BR ALIGN="LEFT"/>+compareTo(o): int<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Nivel [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DCFCE7" CELLPADDING="4"><FONT POINT-SIZE="9">«enumeration»</FONT><BR/><B>Nivel</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">BASICO<BR ALIGN="LEFT"/>ESTUDIANTE<BR ALIGN="LEFT"/>PREMIUM<BR ALIGN="LEFT"/>-etiqueta: String<BR ALIGN="LEFT"/>-descuento: double<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+etiqueta(): String<BR ALIGN="LEFT"/>+descuento(): double<BR ALIGN="LEFT"/>+aplicar(monto): double<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Estado [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#DCFCE7" CELLPADDING="4"><FONT POINT-SIZE="9">«enumeration»</FONT><BR/><B>Estado</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">ABIERTA<BR ALIGN="LEFT"/>EN_CURSO<BR ALIGN="LEFT"/>CERRADA<BR ALIGN="LEFT"/>CANCELADA<BR ALIGN="LEFT"/>-etiqueta: String<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+etiqueta(): String<BR ALIGN="LEFT"/>+permiteTransicionA(d: Estado): boolean<BR ALIGN="LEFT"/>+esTerminal(): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Actor [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«Externalizable»</FONT><BR/><B>Miembro</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-id: int<BR ALIGN="LEFT"/>-nombre: String<BR ALIGN="LEFT"/>-correo: String<BR ALIGN="LEFT"/>-nivel: Nivel<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Miembro()<BR ALIGN="LEFT"/>+Miembro(id, nombre, correo, nivel)<BR ALIGN="LEFT"/>+Miembro(id, nombre, correo)<BR ALIGN="LEFT"/>+id(): int<BR ALIGN="LEFT"/>+nombre(): String<BR ALIGN="LEFT"/>+correo(): String<BR ALIGN="LEFT"/>+nivel(): Nivel<BR ALIGN="LEFT"/>+setNombre(n)<BR ALIGN="LEFT"/>+setCorreo(c)<BR ALIGN="LEFT"/>+setNivel(n)<BR ALIGN="LEFT"/>+writeExternal(out)<BR ALIGN="LEFT"/>+readExternal(in)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Txn [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«Serializable, Iterable»</FONT><BR/><B>Inscripcion</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-id: int<BR ALIGN="LEFT"/>-miembro: Miembro<BR ALIGN="LEFT"/>-fecha: LocalDate<BR ALIGN="LEFT"/>-estado: Estado<BR ALIGN="LEFT"/>-lineas: List&lt;Linea&gt;<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Inscripcion(miembro)<BR ALIGN="LEFT"/>+Inscripcion(id, miembro, fecha)<BR ALIGN="LEFT"/>+id(): int<BR ALIGN="LEFT"/>+miembro(): Miembro<BR ALIGN="LEFT"/>+fecha(): LocalDate<BR ALIGN="LEFT"/>+estado(): Estado<BR ALIGN="LEFT"/>+agregar(e, u): Linea «sync»<BR ALIGN="LEFT"/>+quitar(c): boolean «sync»<BR ALIGN="LEFT"/>+cambiarEstado(d) «sync»<BR ALIGN="LEFT"/>+iniciar() / cerrar() / cancelar()<BR ALIGN="LEFT"/>+restaurarEstado(e) «sync»<BR ALIGN="LEFT"/>+subtotal(): double<BR ALIGN="LEFT"/>+total(): double<BR ALIGN="LEFT"/>+diasDesde(hoy): long<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Linea [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«inner final»</FONT><BR/><B>Inscripcion.Linea</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-elemento: Actividad<BR ALIGN="LEFT"/>-unidades: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-Linea(e, u)<BR ALIGN="LEFT"/>+elemento(): Actividad<BR ALIGN="LEFT"/>+unidades(): int<BR ALIGN="LEFT"/>+subtotal(): double<BR ALIGN="LEFT"/>+importe(): double<BR ALIGN="LEFT"/>+contenedor(): Inscripcion<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Cat [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«Serializable, Iterable»</FONT><BR/><B>Programa</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-elementos: Map&lt;CodigoActividad, Actividad&gt;<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Programa(iniciales...)<BR ALIGN="LEFT"/>+agregar(nuevos...)<BR ALIGN="LEFT"/>+buscar(clave): Optional<BR ALIGN="LEFT"/>+retirar(clave): boolean<BR ALIGN="LEFT"/>+tamanio(): int<BR ALIGN="LEFT"/>+filtrar(r: Regla): List<BR ALIGN="LEFT"/>+deTipo(t: Class): List<BR ALIGN="LEFT"/>+ordenados(c: Comparator): List<BR ALIGN="LEFT"/><U>+porTarifa(u: int): Comparator</U><BR ALIGN="LEFT"/>+resumen(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Iter [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«private inner»</FONT><BR/><B>Programa.Iterador</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-cursor: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+hasNext(): boolean<BR ALIGN="LEFT"/>+next(): Actividad<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Regla [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«functional interface»</FONT><BR/><B>Regla&lt;T&gt;</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+evaluar(t: T): boolean</I><BR ALIGN="LEFT"/>+y(o): Regla «default»<BR ALIGN="LEFT"/>+o(o): Regla «default»<BR ALIGN="LEFT"/>+negar(): Regla «default»<BR ALIGN="LEFT"/>+comoPredicado(): Predicate<BR ALIGN="LEFT"/><U>+todas(): Regla</U><BR ALIGN="LEFT"/><U>+de(p: Predicate): Regla</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Reglas [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«utility»</FONT><BR/><B>Reglas</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+precioHasta(max): Regla</U><BR ALIGN="LEFT"/><U>+nombreContiene(texto): Regla</U><BR ALIGN="LEFT"/><U>+conCapacidad(c): Regla</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Fab [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«functional interface»</FONT><BR/><B>FabricaElemento&lt;E, A&gt;</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+crear(nombre, precio, atributo): E</I><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    RNE [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#F1F5F9" CELLPADDING="4"><FONT POINT-SIZE="9">«exception»</FONT><BR/><B>ReglaNegocioException</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+ReglaNegocioException(mensaje)</TD></TR></TABLE>>];
+
+
+    /* ================================================================== */
+    /* 2. PAQUETE CONCURRENCIA Y EVENTOS                                  */
+    /* ================================================================== */
+    TareaPeriodica [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#EDE9FE" CELLPADDING="4"><FONT POINT-SIZE="9">«abstract»</FONT><BR/><B>TareaPeriodica</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-periodoMs: long<BR ALIGN="LEFT"/>-activa: boolean «volatile»<BR ALIGN="LEFT"/>-hilo: Thread<BR ALIGN="LEFT"/>-ciclos: long «volatile»<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">#TareaPeriodica(periodo)<BR ALIGN="LEFT"/>+iniciar(nombre) «final»<BR ALIGN="LEFT"/>+detener() «final»<BR ALIGN="LEFT"/>+activa(): boolean «final»<BR ALIGN="LEFT"/>+ciclos(): long «final»<BR ALIGN="LEFT"/>+run() «final»<BR ALIGN="LEFT"/><I>#ejecutarCiclo()</I><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    MonitorRenovaciones [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#EDE9FE" CELLPADDING="4"><FONT POINT-SIZE="9">«inner»</FONT><BR/><B>Gimnasio.MonitorRenovaciones</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-MonitorRenovaciones(periodo)<BR ALIGN="LEFT"/>#ejecutarCiclo()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Evento [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«record»</FONT><BR/><B>Evento</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">tipo: TipoEvento<BR ALIGN="LEFT"/>mensaje: String<BR ALIGN="LEFT"/>instante: LocalDateTime<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+de(tipo, mensaje): Evento</U><BR ALIGN="LEFT"/>+toString(): String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    OyenteEvento [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«functional interface»</FONT><BR/><B>OyenteEvento</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+notificar(evento)</I><BR ALIGN="LEFT"/>+luego(siguiente): OyenteEvento «default»<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    TipoEvento [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FCE7F3" CELLPADDING="4"><FONT POINT-SIZE="9">«enumeration»</FONT><BR/><B>TipoEvento</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">ALTA<BR ALIGN="LEFT"/>CAMBIO_ESTADO<BR ALIGN="LEFT"/>ALERTA<BR ALIGN="LEFT"/>CANCELACION_AUTOMATICA</TD></TR><TR><TD></TD></TR></TABLE>>];
+
+
+    /* ================================================================== */
+    /* 3. PAQUETE PERSISTENCIA Y SERVICIO                                 */
+    /* ================================================================== */
+    Gimnasio [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E0F2FE" CELLPADDING="4"><FONT POINT-SIZE="9">«service, AutoCloseable»</FONT><BR/><B>Gimnasio</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+PLAZO_DIAS: int</U><BR ALIGN="LEFT"/>-catalogo: Programa<BR ALIGN="LEFT"/>-miembros: Map<BR ALIGN="LEFT"/>-registros: Map<BR ALIGN="LEFT"/>-alertados: Set<BR ALIGN="LEFT"/>-oyentes: List<BR ALIGN="LEFT"/>-repoElementos, repoMiembros, repoRegistros<BR ALIGN="LEFT"/>-reloj: Supplier<BR ALIGN="LEFT"/>-monitor: MonitorRenovaciones<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Gimnasio(bd)<BR ALIGN="LEFT"/>+Gimnasio(bd, reloj)<BR ALIGN="LEFT"/>+suscribir(o) / desuscribir(o)<BR ALIGN="LEFT"/>+registrar(fab, nom, p, attr): E<BR ALIGN="LEFT"/>+actualizar(e, nom, p)<BR ALIGN="LEFT"/>+retirar(clave): boolean<BR ALIGN="LEFT"/>+catalogo() / elemento(clave)<BR ALIGN="LEFT"/>+registrarMiembro(...): Miembro<BR ALIGN="LEFT"/>+cambiarNivel(id, nivel)<BR ALIGN="LEFT"/>+miembro(id) / miembros()<BR ALIGN="LEFT"/>+eliminarMiembro(id) / editarMiembro(...)<BR ALIGN="LEFT"/>+abrir(idMiembro): Inscripcion<BR ALIGN="LEFT"/>+agregarLinea(id, clave, u): Linea<BR ALIGN="LEFT"/>+quitarLinea(id, clave): boolean<BR ALIGN="LEFT"/>+iniciar(id) / cerrar(id) / cancelar(id)<BR ALIGN="LEFT"/>+registro(id) / registros() / registrosEn(e)<BR ALIGN="LEFT"/>+ingresosPorTipo() / masDemandado()<BR ALIGN="LEFT"/>+mejores(n) / estadisticas()<BR ALIGN="LEFT"/>+particionarPorPrecio(u) / conteoPorEstado()<BR ALIGN="LEFT"/>+buscar(regla) / proyectar(fn)<BR ALIGN="LEFT"/>+describir(e): String<BR ALIGN="LEFT"/>+revisar(): int<BR ALIGN="LEFT"/>+iniciarMonitor(ms) / detenerMonitor()<BR ALIGN="LEFT"/>+monitorActivo(): boolean<BR ALIGN="LEFT"/>+exportarRespaldo(path)<BR ALIGN="LEFT"/>+close()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Repositorio [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF08A" CELLPADDING="4"><FONT POINT-SIZE="9">«interface»</FONT><BR/><B>Repositorio&lt;T, K&gt;</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><I>+guardar(entidad)</I><BR ALIGN="LEFT"/><I>+buscar(clave): Optional</I><BR ALIGN="LEFT"/><I>+todos(): List</I><BR ALIGN="LEFT"/><I>+eliminar(clave): boolean</I><BR ALIGN="LEFT"/>+existe(clave): boolean «default»<BR ALIGN="LEFT"/>+guardarTodos(entidades) «default»<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    RepoAct [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF08A" CELLPADDING="4"><FONT POINT-SIZE="9">«sqlite repo»</FONT><BR/><B>RepositorioActividadSQLite</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+RepositorioActividadSQLite(bd)<BR ALIGN="LEFT"/>+guardar(e)<BR ALIGN="LEFT"/>+buscar(clave): Optional<BR ALIGN="LEFT"/>+todos(): List<BR ALIGN="LEFT"/>+eliminar(clave): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    RepoIns [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF08A" CELLPADDING="4"><FONT POINT-SIZE="9">«sqlite repo»</FONT><BR/><B>RepositorioInscripcionSQLite</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+RepositorioInscripcionSQLite(bd, miembros, elementos)<BR ALIGN="LEFT"/>+guardar(t)<BR ALIGN="LEFT"/>+buscar(id): Optional<BR ALIGN="LEFT"/>+todos(): List<BR ALIGN="LEFT"/>+eliminar(id): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    RepoMie [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF08A" CELLPADDING="4"><FONT POINT-SIZE="9">«sqlite repo»</FONT><BR/><B>RepositorioMiembroSQLite</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+RepositorioMiembroSQLite(bd)<BR ALIGN="LEFT"/>+guardar(a)<BR ALIGN="LEFT"/>+buscar(id): Optional<BR ALIGN="LEFT"/>+todos(): List<BR ALIGN="LEFT"/>+eliminar(id): boolean<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    ConexionSQLite [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF08A" CELLPADDING="4"><FONT POINT-SIZE="9">«AutoCloseable»</FONT><BR/><B>ConexionSQLite</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-conexion: Connection<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+ConexionSQLite(rutaArchivo)<BR ALIGN="LEFT"/>+conexion(): Connection<BR ALIGN="LEFT"/>+enTransaccion(trabajo): R<BR ALIGN="LEFT"/>+close()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Respaldo [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF08A" CELLPADDING="4"><FONT POINT-SIZE="9">«utility»</FONT><BR/><B>Respaldo</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+ENCABEZADO: String</U></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+exportar(archivo, catalogo, miembros, registros)</U><BR ALIGN="LEFT"/><U>+importar(archivo): Contenido</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    PersistenciaException [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#FEF08A" CELLPADDING="4"><FONT POINT-SIZE="9">«exception»</FONT><BR/><B>PersistenciaException</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+PersistenciaException(mensaje, causa)</TD></TR></TABLE>>];
+
+
+    /* ================================================================== */
+    /* 4. PAQUETE INTERFAZ DE USUARIO (UI)                                */
+    /* ================================================================== */
+    AppGimnasio [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«main»</FONT><BR/><B>AppGimnasio</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+main(args: String[])</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    VentanaPrincipal [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«JFrame»</FONT><BR/><B>VentanaPrincipal</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-gimnasio: Gimnasio<BR ALIGN="LEFT"/>-contenido: JPanel<BR ALIGN="LEFT"/>-vistas: List<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+VentanaPrincipal(gimnasio, reloj, rutaBd, alCerrar)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Vista [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«abstract JPanel»</FONT><BR/><B>Vista</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-acciones: JPanel</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+Vista(titulo, subtitulo)<BR ALIGN="LEFT"/>+agregarAccion(c)<BR ALIGN="LEFT"/><I>+refrescar()</I></TD></TR></TABLE>>];
+
+    PanelActividades [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«JPanel»</FONT><BR/><B>PanelActividades</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-g: Gimnasio<BR ALIGN="LEFT"/>-tabla: JTable<BR ALIGN="LEFT"/>-buscar: JTextField<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+PanelActividades(g, alCambiar)<BR ALIGN="LEFT"/>+refrescar()</TD></TR></TABLE>>];
+
+    PanelInscripciones [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«JPanel»</FONT><BR/><B>PanelInscripciones</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-g: Gimnasio<BR ALIGN="LEFT"/>-tabla: JTable<BR ALIGN="LEFT"/>-tablaLineas: JTable<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+PanelInscripciones(g, alCambiar)<BR ALIGN="LEFT"/>+refrescar()</TD></TR></TABLE>>];
+
+    PanelMiembros [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«JPanel»</FONT><BR/><B>PanelMiembros</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-gimnasio: Gimnasio<BR ALIGN="LEFT"/>-tabla: JTable<BR ALIGN="LEFT"/>-buscar: JTextField</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+PanelMiembros(gimnasio, alCambiar)<BR ALIGN="LEFT"/>+refrescar()</TD></TR></TABLE>>];
+
+    PanelMonitor [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«JPanel»</FONT><BR/><B>PanelMonitor</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-g: Gimnasio<BR ALIGN="LEFT"/>-reloj: RelojSimulado<BR ALIGN="LEFT"/>-bitacora: DefaultListModel</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+PanelMonitor(g, reloj, alCambiar)<BR ALIGN="LEFT"/>+registrar(e)<BR ALIGN="LEFT"/>+refrescar()</TD></TR></TABLE>>];
+
+    PanelResumen [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«JPanel»</FONT><BR/><B>PanelResumen</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-g: Gimnasio<BR ALIGN="LEFT"/>-barras: Graficas.Barras<BR ALIGN="LEFT"/>-dona: Graficas.Dona</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+PanelResumen(g)<BR ALIGN="LEFT"/>+refrescar()</TD></TR></TABLE>>];
+
+    Graficas [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«UI Component»</FONT><BR/><B>Graficas (Barras / Dona)</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+pintar componentes y gráficos Java2D</TD></TR></TABLE>>];
+
+    RelojSimulado [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«Simulation Clock»</FONT><BR/><B>RelojSimulado</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">-desplazamiento: AtomicInteger</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3">+hoy(): LocalDate<BR ALIGN="LEFT"/>+avanzar(dias)<BR ALIGN="LEFT"/>+reiniciar()<BR ALIGN="LEFT"/>+dias(): int</TD></TR></TABLE>>];
+
+    Tema [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«utility»</FONT><BR/><B>Tema</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+instalar()</U><BR ALIGN="LEFT"/><U>+estilizarTabla(t)</U><BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+
+    Util [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#334155"><TR><TD BGCOLOR="#E2E8F0" CELLPADDING="4"><FONT POINT-SIZE="9">«utility»</FONT><BR/><B>Util</B></TD></TR><TR><TD></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="3"><U>+dinero(v): String</U><BR ALIGN="LEFT"/><U>+colorEstado(e): Color</U><BR ALIGN="LEFT"/><U>+dialogo(...): boolean</U></TD></TR></TABLE>>];
+
+
+    /* ================================================================== */
+    /* 5. RELACIONES Y CONEXIONES ESTRUCTURALES                           */
+    /* ================================================================== */
+
+    /* Modelo y Herencias */
+    Contrato -> Base [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+    Base -> S1 [dir=back, arrowtail=empty, arrowhead=none, style=solid];
+    Base -> S2 [dir=back, arrowtail=empty, arrowhead=none, style=solid];
+    Base -> S3 [dir=back, arrowtail=empty, arrowhead=none, style=solid];
+    CAP1 -> S1 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+    CAP2 -> S2 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+    CAP1 -> S3 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+    CAP2 -> S3 [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+    Contrato -> Clave [arrowhead=vee, style=dashed, label=" usa"];
+
+    /* Asociaciones de Dominio */
+    Txn -> Linea [dir=back, arrowtail=diamond, arrowhead=none, headlabel="1..*", taillabel="1", label=" «inner»", fontsize=9];
+    Linea -> Base [arrowhead=vee, headlabel="1", fontsize=9];
+    Txn -> Actor [arrowhead=vee, headlabel="1", fontsize=9, label=" miembro"];
+    Txn -> Estado [arrowhead=vee, label=" estado"];
+    Actor -> Nivel [arrowhead=vee, label=" nivel"];
+    Cat -> Base [dir=back, arrowtail=odiamond, arrowhead=none, headlabel="0..*", fontsize=9, label=" elementos"];
+    Cat -> Iter [dir=back, arrowtail=odot, arrowhead=none, style=solid, color="#64748B"];
+    Cat -> Regla [arrowhead=vee, style=dashed];
+    Fab -> Base [arrowhead=vee, style=dashed, label=" crea", fontsize=9];
+    Base -> RNE [arrowhead=vee, style=dashed, label=" lanza", fontsize=9];
+    Reglas -> Regla [arrowhead=vee, style=dashed, label=" crea"];
+
+    /* Concurrencia y Eventos */
+    Gimnasio -> MonitorRenovaciones [dir=back, arrowtail=diamond, arrowhead=none, label=" posee"];
+    MonitorRenovaciones -> TareaPeriodica [dir=back, arrowtail=empty, arrowhead=none, style=solid];
+    Gimnasio -> Evento [arrowhead=vee, style=dashed, label=" publica"];
+    Gimnasio -> OyenteEvento [arrowhead=vee, style=dashed, label=" notifica"];
+    OyenteEvento -> Evento [arrowhead=vee, style=dashed, label=" recibe"];
+
+    /* Persistencia y Repositorios */
+    RepoAct -> Repositorio [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+    RepoIns -> Repositorio [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+    RepoMie -> Repositorio [dir=back, arrowtail=empty, arrowhead=none, style=dashed];
+
+    Gimnasio -> RepoAct [arrowhead=vee, label=" usa"];
+    Gimnasio -> RepoIns [arrowhead=vee, label=" usa"];
+    Gimnasio -> RepoMie [arrowhead=vee, label=" usa"];
+
+    RepoAct -> ConexionSQLite [arrowhead=vee, label=" usa bd"];
+    RepoIns -> ConexionSQLite [arrowhead=vee, label=" usa bd"];
+    RepoMie -> ConexionSQLite [arrowhead=vee, label=" usa bd"];
+
+    /* Relaciones clave: Inscripción y Gimnasio / Repositorios */
+    Gimnasio -> Txn [arrowhead=vee, label=" administra registros", style=dashed];
+    RepoIns -> Txn [arrowhead=vee, label=" persiste/reconstruye", style=dashed];
+    Respaldo -> Txn [arrowhead=vee, style=dashed, label=" serializa"];
+
+    /* Interfaz de Usuario (UI) y su dependencia Fachada (Gimnasio) */
+    AppGimnasio -> VentanaPrincipal [arrowhead=vee, label=" inicia"];
+
+    /* Relación principal de servicio agregada */
+    VentanaPrincipal -> Gimnasio [arrowhead=vee, label=" utiliza servicio"];
+
+    VentanaPrincipal -> PanelResumen [arrowhead=vee, label=" contiene"];
+    VentanaPrincipal -> PanelActividades [arrowhead=vee, label=" contiene"];
+    VentanaPrincipal -> PanelMiembros [arrowhead=vee, label=" contiene"];
+    VentanaPrincipal -> PanelInscripciones [arrowhead=vee, label=" contiene"];
+    VentanaPrincipal -> PanelMonitor [arrowhead=vee, label=" contiene"];
+    VentanaPrincipal -> PanelMonitor [arrowhead=vee, style=dashed, label=" oyente eventos"];
+
+    PanelResumen -> Gimnasio [arrowhead=vee, label=" consulta reportes"];
+    PanelActividades -> Gimnasio [arrowhead=vee, label=" administra catálogo"];
+    PanelMiembros -> Gimnasio [arrowhead=vee, label=" administra socios"];
+    PanelInscripciones -> Gimnasio [arrowhead=vee, label=" administra transacciones"];
+    PanelMonitor -> Gimnasio [arrowhead=vee, label=" controla monitor"];
+
+    PanelResumen -> Vista [dir=back, arrowtail=empty, style=dashed];
+    PanelActividades -> Vista [dir=back, arrowtail=empty, style=dashed];
+    PanelMiembros -> Vista [dir=back, arrowtail=empty, style=dashed];
+    PanelInscripciones -> Vista [dir=back, arrowtail=empty, style=dashed];
+    PanelMonitor -> Vista [dir=back, arrowtail=empty, style=dashed];
+    PanelResumen -> Graficas [arrowhead=vee, label=" dibuja"];
+    VentanaPrincipal -> RelojSimulado [arrowhead=vee, label=" inyecta reloj"];
 }
