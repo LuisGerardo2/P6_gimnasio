@@ -1,7 +1,9 @@
 package mx.tecnm.orizaba.tp.gimnasio.persistencia;
 
+import mx.tecnm.orizaba.tp.gimnasio.modelo.Estado;
 import mx.tecnm.orizaba.tp.gimnasio.modelo.Miembro;
 import mx.tecnm.orizaba.tp.gimnasio.modelo.Nivel;
+import mx.tecnm.orizaba.tp.gimnasio.servicio.Gimnasio;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -104,9 +106,9 @@ public class RepositorioMiembroSQLite implements Repositorio<Miembro, Integer> {
 
     }
 
+
     @Override
     public boolean eliminar(Integer id) {
-
         String sql = """
                 DELETE FROM miembro
                 WHERE id = ?

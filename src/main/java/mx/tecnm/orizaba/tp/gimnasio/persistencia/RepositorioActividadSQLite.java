@@ -2,6 +2,8 @@ package mx.tecnm.orizaba.tp.gimnasio.persistencia;
 
 import mx.tecnm.orizaba.tp.gimnasio.modelo.Actividad;
 import mx.tecnm.orizaba.tp.gimnasio.modelo.CodigoActividad;
+import mx.tecnm.orizaba.tp.gimnasio.modelo.Estado;
+import mx.tecnm.orizaba.tp.gimnasio.servicio.Gimnasio;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -119,8 +121,10 @@ public class RepositorioActividadSQLite implements Repositorio<Actividad, Codigo
 
     }
 
+
     @Override
     public boolean eliminar(CodigoActividad clave) {
+
         String sql = """
                 DELETE FROM actividad
                 WHERE clave = ?

@@ -185,18 +185,14 @@ public class Gimnasio implements AutoCloseable {
     public List<Miembro> miembros() {
         return miembros.values().stream().sorted(Comparator.comparingInt(Miembro::id)).toList();
     }
-    public boolean validarMiembroNoActivas(int id){
-        return repoRegistros.todos().stream()
-                .filter(x -> x.estado() == Estado.EN_CURSO && x.miembro().id() == id)
-                .toList().isEmpty();
-    }
+
     public void eliminarMiembro(int id) {
 
-        if (miembros.containsKey(id) && validarMiembroNoActivas(id)) {
+
             repoMiembros.eliminar(id);
             miembros.remove(id);
 
-        }else{ throw new PersistenciaException("Los miembros con inscricpciones activas no pueden eliminarse", new Exception());}
+
 
 
     }
