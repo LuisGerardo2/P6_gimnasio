@@ -1,0 +1,60 @@
+-J-Duser.language=
+-J-Duser.country=
+@options
+@packages
+-classpath
+'C:/Users/luis0/.m2/repository/org/xerial/sqlite-jdbc/3.46.1.3/sqlite-jdbc-3.46.1.3.jar'
+-encoding
+'UTF-8'
+-protected
+--release
+21
+-sourcepath
+'C:/Users/luis0/OneDrive/Desktop/Maestria/Tecnologias de programacion/proyectos u1/TP_esqueletos_estudiantes/P6_gimnasio/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2026. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/luis0/OneDrive/Desktop/Maestria/Tecnologias de programacion/proyectos u1/TP_esqueletos_estudiantes/P6_gimnasio/target/reports/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Miniproyecto 6 - Gestión de Inscripciones de un Gimnasio 1.0.0 API'
+-use
+-version
+-windowtitle
+'Miniproyecto 6 - Gestión de Inscripciones de un Gimnasio 1.0.0 API'
+mx.tecnm.orizaba.tp.gimnasio.app
+mx.tecnm.orizaba.tp.gimnasio.concurrencia
+mx.tecnm.orizaba.tp.gimnasio.eventos
+mx.tecnm.orizaba.tp.gimnasio.funcional
+mx.tecnm.orizaba.tp.gimnasio.modelo
+mx.tecnm.orizaba.tp.gimnasio.persistencia
+mx.tecnm.orizaba.tp.gimnasio.servicio
+mx.tecnm.orizaba.tp.gimnasio.ui
+C:\Users\luis0\.m2\repository\org\xerial\sqlite-jdbc\3.46.1.3\sqlite-jdbc-3.46.1.3.jar = 1792200145946
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\src\main\java = 1792201613126
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\allclasses-index.html = 1793894496501
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\allpackages-index.html = 1793894496504
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\constant-values.html = 1793894496251
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\copy.svg = 1793894496558
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\element-list = 1793894496174
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\help-doc.html = 1793894496551
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\index-all.html = 1793894496539
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\index.html = 1793894496472
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\link.svg = 1793894496560
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\member-search-index.js = 1793894496512
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\module-search-index.js = 1793894496507
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\overview-summary.html = 1793894496544
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\overview-tree.html = 1793894496467
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\package-search-index.js = 1793894496508
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\script.js = 1793894496556
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\search-page.js = 1793894496564
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\search.html = 1793894496541
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\search.js = 1793894496562
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\serialized-form.html = 1793894496271
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\stylesheet.css = 1793894496554
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\tag-search-index.js = 1793894496514
+C:\Users\luis0\OneDrive\Desktop\Maestria\Tecnologias de programacion\proyectos u1\TP_esqueletos_estudiantes\P6_gimnasio\target\reports\apidocs\type-search-index.js = 1793894496509

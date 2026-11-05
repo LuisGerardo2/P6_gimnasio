@@ -11,4 +11,4 @@ mvn -q exec:java -Pdemo          # Llenara y creara la
                                  
 ```
 
-Consulta el documento DOCX del proyecto para la especificación completa.
+Consulta el documento javadoc.html del proyecto para la especificación completa.
