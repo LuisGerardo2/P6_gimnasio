@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class DemoModelo {
 
     public static void main(String[] args) throws Exception {
-        Path bd = args.length > 0 ? Path.of(args[0]) : Files.createTempFile("gimnasio", ".db");
+        Path bd = args.length > 0 ? Path.of(args[0]) : Path.of("datos.db");
         AtomicReference<LocalDate> hoy = new AtomicReference<>(LocalDate.now());
 
         try (ConexionSQLite cx = new ConexionSQLite(bd.toString());

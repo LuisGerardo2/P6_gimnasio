@@ -31,7 +31,7 @@ public final class ConexionSQLite implements AutoCloseable {
         """
         CREATE TABLE IF NOT EXISTS inscripcion (
             id        INTEGER PRIMARY KEY,
-            miembro_id  INTEGER NOT NULL REFERENCES miembro(id),
+            miembro_id  INTEGER NOT NULL REFERENCES miembro(id) ON DELETE CASCADE,
             fecha     TEXT NOT NULL,
             estado    TEXT NOT NULL
         )""",

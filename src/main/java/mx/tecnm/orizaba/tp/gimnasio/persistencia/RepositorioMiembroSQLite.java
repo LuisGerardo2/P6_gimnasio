@@ -106,10 +106,10 @@ public class RepositorioMiembroSQLite implements Repositorio<Miembro, Integer> {
 
     @Override
     public boolean eliminar(Integer id) {
+
         String sql = """
-                DELETE FROM miembros
+                DELETE FROM miembro
                 WHERE id = ?
-            
                 """;
 
         try(PreparedStatement ps = bd.conexion().prepareStatement(sql)){
@@ -119,6 +119,7 @@ public class RepositorioMiembroSQLite implements Repositorio<Miembro, Integer> {
 
             return filas > 0;
         } catch (SQLException e) {
+            System.out.println(e);
             throw new PersistenciaException("Error al eliminar",e);
         }
         //HECHO TODO E13: DELETE por id.

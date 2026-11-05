@@ -14,12 +14,7 @@ import mx.tecnm.orizaba.tp.gimnasio.modelo.Estado;
 import mx.tecnm.orizaba.tp.gimnasio.modelo.Nivel;
 import mx.tecnm.orizaba.tp.gimnasio.modelo.ReglaNegocioException;
 import mx.tecnm.orizaba.tp.gimnasio.modelo.Inscripcion;
-import mx.tecnm.orizaba.tp.gimnasio.persistencia.ConexionSQLite;
-import mx.tecnm.orizaba.tp.gimnasio.persistencia.Repositorio;
-import mx.tecnm.orizaba.tp.gimnasio.persistencia.RepositorioMiembroSQLite;
-import mx.tecnm.orizaba.tp.gimnasio.persistencia.RepositorioActividadSQLite;
-import mx.tecnm.orizaba.tp.gimnasio.persistencia.RepositorioInscripcionSQLite;
-import mx.tecnm.orizaba.tp.gimnasio.persistencia.Respaldo;
+import mx.tecnm.orizaba.tp.gimnasio.persistencia.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -189,6 +184,27 @@ public class Gimnasio implements AutoCloseable {
 
     public List<Miembro> miembros() {
         return miembros.values().stream().sorted(Comparator.comparingInt(Miembro::id)).toList();
+    }
+    public boolean validarMiembroNoActivas(int id){
+        return repoRegistros.todos().stream()
+                .filter(x -> x.estado() == Estado.EN_CURSO && x.miembro().id() == id)
+                .toList().isEmpty();
+    }
+    public void eliminarMiembro(int id) {
+
+        if (miembros.containsKey(id) && validarMiembroNoActivas(id)) {
+            repoMiembros.eliminar(id);
+            miembros.remove(id);
+
+        }else{ throw new PersistenciaException("Los miembros con inscricpciones activas no pueden eliminarse", new Exception());}
+
+
+    }
+
+    public void editarMiembro(int id,String nombre, String correo, Nivel nivel){
+        Miembro miembro = new Miembro(id, nombre,correo,nivel);
+        repoMiembros.guardar(miembro);
+        miembros.put(id,miembro);
     }
 
     // ------------------------------------------------------------------ inscripciones
